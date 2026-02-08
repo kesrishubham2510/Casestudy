@@ -2,12 +2,16 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.ICache;
 
+import java.util.logging.Logger;
+
 public class RedisCacheService implements ICache {
 
     private String serverURL;
     private String hostname;
+    private final Logger logger;
 
     private RedisCacheService(){
+        logger = Logger.getLogger(RedisCacheService.class.getSimpleName());
         init();
         ping();
     }
@@ -24,7 +28,7 @@ public class RedisCacheService implements ICache {
 
     @Override
     public <K, V> void put(K key, V value, long expiryTimestamp) {
-
+        // logic to insert the value in the cache
     }
 
     @Override
