@@ -1,7 +1,7 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.ITrendEvaluation;
-import com.myreflectionthoughts.covidstat.entity.ExternalAPIResponse;
+import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 
 public class GlobalAverage implements ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> {

@@ -2,7 +2,7 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
-import com.myreflectionthoughts.covidstat.entity.ExternalAPIResponse;
+import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
 
 import java.util.logging.Logger;

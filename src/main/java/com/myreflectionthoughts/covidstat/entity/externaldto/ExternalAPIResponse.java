@@ -1,6 +1,7 @@
-package com.myreflectionthoughts.covidstat.entity;
+package com.myreflectionthoughts.covidstat.entity.externaldto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 
 public class ExternalAPIResponse extends ResponseWrapper {
     private long updated;
