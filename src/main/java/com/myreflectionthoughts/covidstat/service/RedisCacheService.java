@@ -1,10 +1,13 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.ICache;
+import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 
 import java.util.logging.Logger;
 
-public class RedisCacheService implements ICache {
+
+// For the current use-case, I'm using String as key
+public class RedisCacheService implements ICache<String, ResponseWrapper> {
 
     private String serverURL;
     private String hostname;
@@ -27,14 +30,15 @@ public class RedisCacheService implements ICache {
     }
 
     @Override
-    public <K, V> void put(K key, V value, long expiryTimestamp) {
-        // logic to insert the value in the cache
+    public void put(String key, ResponseWrapper value, long expiryTimestamp) {
+
     }
 
     @Override
-    public <K, V> V get(K key) {
+    public ResponseWrapper get(String key) {
         return null;
     }
+
 
     // Singleton pattern
     private static class ICacheInstanceManager{

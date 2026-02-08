@@ -2,7 +2,7 @@ package com.myreflectionthoughts.covidstat.contract;
 
 import java.util.Map;
 
-public interface IRemoteConnection {
+public interface IRemoteConnection<K> {
 
-    <K> K executeRequest(String url, Map<String, String> headers);
+    K executeRequest(String url, Map<String, String> headers);
 }

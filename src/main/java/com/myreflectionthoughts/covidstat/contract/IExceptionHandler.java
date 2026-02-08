@@ -1,6 +1,6 @@
 package com.myreflectionthoughts.covidstat.contract;
 
-public interface IExceptionHandler {
+public interface IExceptionHandler<K,T> {
 
-    <K,T> T handleException(K input);
+    T handleException(K input);
 }
