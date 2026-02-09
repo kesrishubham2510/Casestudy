@@ -1,9 +1,15 @@
 package com.myreflectionthoughts.covidstat.entity.externaldto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
+import lombok.Data;
 
-public class ExternalAPIResponse extends ResponseWrapper {
+import java.util.List;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ExternalAPIResponse extends ResponseWrapper{
     private long updated;
     private String country;
     private CountryInfo countryInfo;
@@ -27,8 +33,10 @@ public class ExternalAPIResponse extends ResponseWrapper {
     private double activePerOneMillion;
     private double recoveredPerOneMillion;
     private double criticalPerOneMillion;
+    List<CoverageStatTimeline> timeline;
 
-    static class CountryInfo extends ResponseWrapper {
+    @Data
+    static class CountryInfo{
         private int _id;
         private String iso2;
         private String iso3;

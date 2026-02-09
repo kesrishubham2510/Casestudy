@@ -2,7 +2,6 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
-import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,19 +11,20 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 public class HttpConnection implements IRemoteConnection<String> {
-    String hostName = "https://disease.sh/v3/covid-19";
+    String hostName = "https://disease.sh";
     private final HttpClient httpClient;
 
-    public HttpConnection(MappingUtility mappingUtility){
+    public HttpConnection(){
         this.httpClient = HttpClient.newHttpClient();
     }
 
     @Override
     public String executeGetRequest(String url, Map<String, String> headers) {
-        hostName += url;
-        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(hostName)).GET().build();
+        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(hostName+url)).GET().build();
         HttpResponse<String> httpResponse;
         ExternalAPIResponse externalAPIResponse = null;
+
+        // TODO : Throw exception for status code other than 200
 
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());

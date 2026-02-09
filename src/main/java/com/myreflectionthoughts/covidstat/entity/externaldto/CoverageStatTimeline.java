@@ -1,8 +1,9 @@
 package com.myreflectionthoughts.covidstat.entity.externaldto;
 
-import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
+import lombok.Data;
 
-public class CoverageStatTimeline extends ResponseWrapper {
+@Data
+public class CoverageStatTimeline {
      private String total;
      private String daily;
      private String totalPerHundred;

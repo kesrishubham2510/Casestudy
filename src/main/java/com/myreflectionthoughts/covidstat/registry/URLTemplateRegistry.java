@@ -22,7 +22,7 @@ public class URLTemplateRegistry {
     }
 
     private void intializeMap(){
-       map.put(USECASE.LATEST_STAT.name(), "");
-       map.put(USECASE.VACCINE_COVERAGE.name(), "");
+       map.put(USECASE.LATEST_STAT.name(), "/v3/covid-19/countries/{country}?yesterday={yesterday}&twoDaysAgo={twoDaysAgo}&strict={strict}&allowNull={allowNull}");
+       map.put(USECASE.VACCINE_COVERAGE.name(), "/v3/covid-19/vaccine/coverage/countries/{country}?lastdays={lastdays}&fullData={fullData}");
     }
 }
