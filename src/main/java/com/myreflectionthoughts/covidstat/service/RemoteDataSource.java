@@ -7,6 +7,7 @@ import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.enums.USECASE;
+import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
@@ -25,7 +26,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
     static {
         defaultHeaders = new HashMap<>();
-        defaultHeaders.put("accept", ": application/json");
+        defaultHeaders.put("accept", "application/json");
     }
 
     RemoteDataSource(URLTemplateRegistry urlTemplateRegistry, IRemoteConnection<String> remoteConnection, MappingUtility mappingUtility){
@@ -46,9 +47,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         try {
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
         } catch (JsonProcessingException e) {
-            //TODO: throw and handle the parse exception in Orchestrator
-            // TODO: handle network level exceptions as well
-            logger.severe(e.getMessage());
+            logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
+            throw new CaseStudyException("PARSING_ERROR_LATEST_STAT", 400, "Error occurred while parsing response for latest stats");
         }
 
         return externalAPIResponse;
@@ -65,9 +65,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         try {
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
         } catch (JsonProcessingException e) {
-            //TODO: throw and handle the parse exception in Orchestrator
-            // TODO: handle network level exceptions as well
-            logger.severe(e.getMessage());
+            logger.severe("Error occurred while parsing response for vaccine coverage, ex:- "+e.getMessage());
+            throw new CaseStudyException("PARSING_ERROR_VACCINE_COVERAGE", 400, "Error occurred while parsing response for vaccine coverage stats");
         }
 
         return externalAPIResponse;
@@ -95,9 +94,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             lastTwoDaysResponse.getLastTwoDaysResponse().add(externalAPIResponse);
 
         } catch (JsonProcessingException e) {
-            //TODO: throw and handle the parse exception in Orchestrator
-            // TODO: handle network level exceptions as well
-            logger.severe(e.getMessage());
+            logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
+            throw new CaseStudyException("PARSING_ERROR_DAILY_STAT", 400, "Error occurred while parsing response for daily stats");
         }
 
         return lastTwoDaysResponse;
