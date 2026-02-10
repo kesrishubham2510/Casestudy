@@ -2,6 +2,7 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
+import com.myreflectionthoughts.covidstat.datasource.RemoteDataSource;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;

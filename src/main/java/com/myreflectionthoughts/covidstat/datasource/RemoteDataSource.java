@@ -1,4 +1,4 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.datasource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;

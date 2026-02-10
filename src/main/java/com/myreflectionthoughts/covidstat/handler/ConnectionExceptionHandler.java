@@ -6,6 +6,7 @@ import com.myreflectionthoughts.covidstat.contract.IExceptionHandler;
 public class ConnectionExceptionHandler implements IExceptionHandler<String, Void> {
     @Override
     public Void handleException(String input) {
+
         return null;
     }
 }
