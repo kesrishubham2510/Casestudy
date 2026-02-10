@@ -1,8 +1,11 @@
 package com.myreflectionthoughts.covidstat.entity;
 
+import lombok.Data;
+
+@Data
 public class Trend extends ResponseWrapper{
-    private double average;
-    private double change;
+    private String dailyAverage;
+    private double changePercentage;
     private String direction;
     private String alertMessage;
 }
