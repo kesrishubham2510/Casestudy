@@ -1,0 +1,397 @@
+{
+  "country": "India",
+  "timeline": [
+    {
+      "total": 2205436773,
+      "daily": 263275,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 186,
+      "date": "2/3/23"
+    },
+    {
+      "total": 2205597607,
+      "daily": 255607,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 180,
+      "date": "2/4/23"
+    },
+    {
+      "total": 2205732045,
+      "daily": 237952,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 168,
+      "date": "2/5/23"
+    },
+    {
+      "total": 2205782602,
+      "daily": 169938,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 120,
+      "date": "2/6/23"
+    },
+    {
+      "total": 2205920241,
+      "daily": 150192,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 106,
+      "date": "2/7/23"
+    },
+    {
+      "total": 2206046004,
+      "daily": 134492,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 95,
+      "date": "2/8/23"
+    },
+    {
+      "total": 2206164359,
+      "daily": 127011,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 90,
+      "date": "2/9/23"
+    },
+    {
+      "total": 2206238494,
+      "daily": 114532,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 81,
+      "date": "2/10/23"
+    },
+    {
+      "total": 2206263146,
+      "daily": 95077,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 67,
+      "date": "2/11/23"
+    },
+    {
+      "total": 2206269503,
+      "daily": 76780,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 54,
+      "date": "2/12/23"
+    },
+    {
+      "total": 2206271789,
+      "daily": 69884,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 49,
+      "date": "2/13/23"
+    },
+    {
+      "total": 2206278370,
+      "daily": 51161,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 36,
+      "date": "2/14/23"
+    },
+    {
+      "total": 2206285694,
+      "daily": 34241,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 24,
+      "date": "2/15/23"
+    },
+    {
+      "total": 2206293300,
+      "daily": 18420,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 13,
+      "date": "2/16/23"
+    },
+    {
+      "total": 2206300775,
+      "daily": 8897,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 6,
+      "date": "2/17/23"
+    },
+    {
+      "total": 2206308578,
+      "daily": 6490,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "2/18/23"
+    },
+    {
+      "total": 2206311696,
+      "daily": 6028,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/19/23"
+    },
+    {
+      "total": 2206313573,
+      "daily": 5969,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/20/23"
+    },
+    {
+      "total": 2206320683,
+      "daily": 6045,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/21/23"
+    },
+    {
+      "total": 2206327329,
+      "daily": 5948,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/22/23"
+    },
+    {
+      "total": 2206334710,
+      "daily": 5916,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/23/23"
+    },
+    {
+      "total": 2206341948,
+      "daily": 5882,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/24/23"
+    },
+    {
+      "total": 2206348628,
+      "daily": 5721,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/25/23"
+    },
+    {
+      "total": 2206353431,
+      "daily": 5962,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/26/23"
+    },
+    {
+      "total": 2206355345,
+      "daily": 5967,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/27/23"
+    },
+    {
+      "total": 2206361497,
+      "daily": 5831,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "2/28/23"
+    },
+    {
+      "total": 2206367997,
+      "daily": 5810,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/1/23"
+    },
+    {
+      "total": 2206375298,
+      "daily": 5798,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/2/23"
+    },
+    {
+      "total": 2206382304,
+      "daily": 5765,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/3/23"
+    },
+    {
+      "total": 2206389144,
+      "daily": 5788,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/4/23"
+    },
+    {
+      "total": 2206395019,
+      "daily": 5941,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/5/23"
+    },
+    {
+      "total": 2206396683,
+      "daily": 5905,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/6/23"
+    },
+    {
+      "total": 2206401818,
+      "daily": 5760,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/7/23"
+    },
+    {
+      "total": 2206404680,
+      "daily": 5240,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/8/23"
+    },
+    {
+      "total": 2206407392,
+      "daily": 4585,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 3,
+      "date": "3/9/23"
+    },
+    {
+      "total": 2206414969,
+      "daily": 4666,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 3,
+      "date": "3/10/23"
+    },
+    {
+      "total": 2206422153,
+      "daily": 4716,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 3,
+      "date": "3/11/23"
+    },
+    {
+      "total": 2206427310,
+      "daily": 4613,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 3,
+      "date": "3/12/23"
+    },
+    {
+      "total": 2206429324,
+      "daily": 4663,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 3,
+      "date": "3/13/23"
+    },
+    {
+      "total": 2206436933,
+      "daily": 5016,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/14/23"
+    },
+    {
+      "total": 2206445180,
+      "daily": 5786,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 4,
+      "date": "3/15/23"
+    },
+    {
+      "total": 2206454439,
+      "daily": 6721,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/16/23"
+    },
+    {
+      "total": 2206462789,
+      "daily": 6831,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/17/23"
+    },
+    {
+      "total": 2206469657,
+      "daily": 6868,
+      "totalPerHundred": 0,
+      "dailyPerMillion": 5,
+      "date": "3/18/23"
+    },
+    {
+      "total": 2206477662,
+      "daily": 7193,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/19/23"
+    },
+    {
+      "total": 2206479622,
+      "daily": 7185,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/20/23"
+    },
+    {
+      "total": 2206487387,
+      "daily": 7208,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/21/23"
+    },
+    {
+      "total": 2206494924,
+      "daily": 7106,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/22/23"
+    },
+    {
+      "total": 2206502054,
+      "daily": 6802,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/23/23"
+    },
+    {
+      "total": 2206508895,
+      "daily": 6587,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/24/23"
+    },
+    {
+      "total": 2206518662,
+      "daily": 6920,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/25/23"
+    },
+    {
+      "total": 2206525453,
+      "daily": 6827,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/26/23"
+    },
+    {
+      "total": 2206528035,
+      "daily": 6916,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/27/23"
+    },
+    {
+      "total": 2206539832,
+      "daily": 7492,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 5,
+      "date": "3/28/23"
+    },
+    {
+      "total": 2206551999,
+      "daily": 8154,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 6,
+      "date": "3/29/23"
+    },
+    {
+      "total": 2206565971,
+      "daily": 9131,
+      "totalPerHundred": 155,
+      "dailyPerMillion": 6,
+      "date": "3/30/23"
+    }
+  ]
+}
