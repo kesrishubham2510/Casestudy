@@ -5,8 +5,9 @@ import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 
 public class GlobalAverage implements ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> {
+
     @Override
-    public ResponseWrapper calculate(ExternalAPIResponse data) {
+    public ResponseWrapper calculate(ExternalAPIResponse data, int[] days) {
         return null;
     }
 }
