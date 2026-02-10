@@ -1,6 +1,5 @@
 package com.myreflectionthoughts.covidstat.service;
 
-import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ public class NDayAverageTest {
     private final NDayAverage nDayAverage;
 
     public NDayAverageTest(){
-        this.nDayAverage = new NDayAverage();
+        this.nDayAverage = NDayAverage.getNDayAverageInstance();
     }
     @Test
     public void testCalculateNDayGlobalTrend(){

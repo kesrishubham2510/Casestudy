@@ -13,6 +13,8 @@ import java.util.List;
 
 public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> {
 
+    private NDayAverage(){}
+
     @Override
     public Trends calculate(ExternalAPIResponse data, int[] days) {
 
@@ -70,4 +72,12 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
 
         return trend;
     }
+
+    private static class NDayAverageInstance{
+        public static final NDayAverage nDayAverage = new NDayAverage();
+    }
+    public static NDayAverage getNDayAverageInstance(){
+        return NDayAverageInstance.nDayAverage;
+    }
+
 }
