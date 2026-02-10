@@ -31,7 +31,7 @@ public class HttpConnectionTest {
         this.httpConnection = new HttpConnection(HttpClient.newHttpClient());
         this.mockHttpClient = Mockito.mock(HttpClient.class);
         this.httpResponse =  Mockito.mock(HttpResponse.class);
-        this.urlTemplateRegistry = new URLTemplateRegistry();
+        this.urlTemplateRegistry = URLTemplateRegistry.getURLUrlTemplateRegistryInstance();
         this.mockHttpConnection = new HttpConnection(this.mockHttpClient);
     }
 

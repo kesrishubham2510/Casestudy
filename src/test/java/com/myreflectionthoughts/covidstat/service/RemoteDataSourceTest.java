@@ -32,9 +32,9 @@ public class RemoteDataSourceTest {
     private final String country;
 
     public RemoteDataSourceTest(){
-        this.urlTemplateRegistry = new URLTemplateRegistry();
+        this.urlTemplateRegistry = URLTemplateRegistry.getURLUrlTemplateRegistryInstance();
         this.remoteConnection = new HttpConnection(HttpClient.newHttpClient());
-        this.mappingUtility = new MappingUtility();
+        this.mappingUtility = MappingUtility.getMappingUtilityInstance();
         this.mockRemoteConnection = Mockito.mock(HttpConnection.class);
         this.country = "India";
         this.remoteDataSource = new RemoteDataSource(urlTemplateRegistry, remoteConnection, mappingUtility);

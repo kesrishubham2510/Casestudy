@@ -10,7 +10,7 @@ public class URLTemplateRegistry {
     private final HashMap<String, String> map;
     private final Logger logger;
 
-    public URLTemplateRegistry(){
+    private URLTemplateRegistry(){
         this.map = new HashMap<>();
         intializeMap();
         this.logger = Logger.getLogger(URLTemplateRegistry.class.getSimpleName());
