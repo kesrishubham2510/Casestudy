@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -52,6 +53,14 @@ public class TestDataUtility {
         }
 
         return apiResponse;
+    }
+
+    public static <T> T convertTOPOJO(String content, Class<T> t) {
+        try {
+            return objectMapper.readValue(content, t);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String getFileContent(String filePath){
