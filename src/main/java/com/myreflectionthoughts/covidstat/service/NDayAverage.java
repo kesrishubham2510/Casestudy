@@ -74,7 +74,7 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
     }
 
     private static class NDayAverageInstance{
-        public static final NDayAverage nDayAverage = new NDayAverage();
+        private static final NDayAverage nDayAverage = new NDayAverage();
     }
     public static NDayAverage getNDayAverageInstance(){
         return NDayAverageInstance.nDayAverage;
