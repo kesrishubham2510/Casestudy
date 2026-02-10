@@ -29,7 +29,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         defaultHeaders.put("accept", "application/json");
     }
 
-    RemoteDataSource(URLTemplateRegistry urlTemplateRegistry, IRemoteConnection<String> remoteConnection, MappingUtility mappingUtility){
+    public RemoteDataSource(URLTemplateRegistry urlTemplateRegistry, IRemoteConnection<String> remoteConnection, MappingUtility mappingUtility){
         this.urlTemplateRegistry = urlTemplateRegistry;
         this.mappingUtility = mappingUtility;
         this.remoteConnection = remoteConnection;
