@@ -10,6 +10,6 @@ public class CovidStatResponse extends ResponseWrapper{
     private String noOfCases;
     private String noOfRecoveries;
     private String activeAsToday;
-    private Map<String, Trend> trends;
+    private Map<String, Trends> trends;
     private String alertMessage;
 }
