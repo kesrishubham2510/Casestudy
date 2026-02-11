@@ -1,9 +1,8 @@
 package com.myreflectionthoughts.covidstat.utility;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class CacheKeyUtility {
+public class CacheUtility {
 
     private static final String CURRENT_STAT_SUFFIX = "_currentstat";
     private static final String ONE_DAY_PREV_SUFFIX = "_oneday_prev";

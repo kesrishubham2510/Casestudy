@@ -10,7 +10,7 @@ import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
-import com.myreflectionthoughts.covidstat.utility.CacheKeyUtility;
+import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
@@ -74,7 +74,7 @@ public class Orchestrator {
 
         if (StringUtils.isNotBlank(responseForLatestDataFromCache)) {
 
-            String cacheKeyForResponse = CacheKeyUtility.getKeyForComputedAPI(country, referencedDate);
+            String cacheKeyForResponse = CacheUtility.getKeyForComputedAPI(country, referencedDate);
             String responseFromCache = cacheService.get(cacheKeyForResponse);
 
             if (StringUtils.isNotBlank(responseFromCache)) {
@@ -92,7 +92,7 @@ public class Orchestrator {
 
         // Keeping TTL as 35 minutes, as every 30 minutes new data s pushed into the API
         // TODO: make it configurable
-        cacheService.put(CacheKeyUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheKeyUtility.calculateTTLTimestamp(35));
+        cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(35));
 
         Map<String, Trends> trendsMap = getTrendsFromCache(country, referencedDate);
 
@@ -114,8 +114,8 @@ public class Orchestrator {
 
             // Keeping the TTL as 60 hours because, a referenced historical trend will never change
             // TODO: make it configurable
-            cacheService.put(CacheKeyUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate),  MappingUtility.convertToJsonStructure(countryTrends), CacheKeyUtility.calculateTTLTimestamp(60*60));
-            cacheService.put(CacheKeyUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate),  MappingUtility.convertToJsonStructure(globalTrends), CacheKeyUtility.calculateTTLTimestamp(60*60));
+            cacheService.put(CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate), MappingUtility.convertToJsonStructure(countryTrends), CacheUtility.calculateTTLTimestamp(60*60));
+            cacheService.put(CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate), MappingUtility.convertToJsonStructure(globalTrends), CacheUtility.calculateTTLTimestamp(60*60));
         }
 
         // get the lastTwo days data
@@ -127,7 +127,7 @@ public class Orchestrator {
             alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
 
             // TODO: make it configurable
-            cacheService.put(CacheKeyUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheKeyUtility.calculateTTLTimestamp(35));
+            cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(35));
         }
 
 
@@ -139,7 +139,7 @@ public class Orchestrator {
         covidStatResponse.setAlertMessage(alertMessage);
 
         // TODO: make it configurable
-        cacheService.put(CacheKeyUtility.getKeyForComputedAPI(country, referencedDate),  MappingUtility.convertToJsonStructure(covidStatResponse), CacheKeyUtility.calculateTTLTimestamp(35));
+        cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
         return covidStatResponse;
     }
 
@@ -179,9 +179,9 @@ public class Orchestrator {
 
         Map<String, Trends> trendsMap = new HashMap<>();
 
-        String cacheKeyForGlobalVaccineCoverageTrends = CacheKeyUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate);
+        String cacheKeyForGlobalVaccineCoverageTrends = CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate);
         String responseForGlobalVaccineCoverageTrends = cacheService.get(cacheKeyForGlobalVaccineCoverageTrends);
-        String cacheKeyForCountryVaccineCoverageTrends = CacheKeyUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate);
+        String cacheKeyForCountryVaccineCoverageTrends = CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate);
         String responseForCountryVaccineCoverageTrends = cacheService.get(cacheKeyForCountryVaccineCoverageTrends);
 
 
@@ -211,12 +211,12 @@ public class Orchestrator {
     }
 
     private String getLastTwoDayAlertFromCache(String country, String referencedDate){
-        String cacheKeyForAlertMessage = CacheKeyUtility.getKeyForAlertMessage(country, referencedDate);
+        String cacheKeyForAlertMessage = CacheUtility.getKeyForAlertMessage(country, referencedDate);
         return cacheService.get(cacheKeyForAlertMessage);
     }
 
     private String getLatestStatFromCache(String country){
-        String cacheKeyForLatestData = CacheKeyUtility.getKeyForRawAPIResponseForCurrentStat(country);
+        String cacheKeyForLatestData = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
         return cacheService.get(cacheKeyForLatestData);
     }
 }
