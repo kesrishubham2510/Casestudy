@@ -121,7 +121,7 @@ public class Orchestrator {
         // get the lastTwo days data
         String alertMessage = getLastTwoDayAlertFromCache(country, referencedDate);
 
-        if(StringUtils.isEmpty(alertMessage)) {
+        if(Objects.isNull(alertMessage)) {
             LastTwoDaysResponse lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
             lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
             alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
