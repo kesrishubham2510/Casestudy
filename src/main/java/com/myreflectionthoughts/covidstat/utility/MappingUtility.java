@@ -1,18 +1,32 @@
 package com.myreflectionthoughts.covidstat.utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MappingUtility {
 
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper;
+
+    static {
+        objectMapper = new ObjectMapper();
+    }
 
     private MappingUtility() {
-        this.objectMapper = new ObjectMapper();
     }
 
     public <T> T parseToPOJO(String response, Class<T> t) throws JsonProcessingException {
         return objectMapper.readValue(response, t);
+    }
+
+    public static String adjustGlobalVaccineCoverageResponse(String apiResponse) throws JsonProcessingException {
+
+        JsonNode array = objectMapper.readTree(apiResponse);
+        ObjectNode key = objectMapper.createObjectNode();
+        key.set("timeline", array);
+
+        return objectMapper.writeValueAsString(key);
     }
 
     private static class MappingUtilityInstance{
