@@ -63,6 +63,11 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
 
         try {
+
+            if(StringUtils.isEmpty(country)){
+                response = MappingUtility.adjustGlobalVaccineCoverageResponse(response);
+            }
+
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
         } catch (JsonProcessingException e) {
             logger.severe("Error occurred while parsing response for vaccine coverage, ex:- "+e.getMessage());
@@ -141,7 +146,11 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
     private String prepareURL(String url, String country, String lastDays, String fullData){
 
-        url = url.replace("{country}", country);
+        if(StringUtils.isBlank(country)){
+            url = url.replace("countries/{country}", "");
+        }else {
+            url = url.replace("{country}", country);
+        }
 
         // by default API returns latest of last 30 days data it has
         if(StringUtils.isBlank(lastDays) || lastDays.equalsIgnoreCase("0")){
