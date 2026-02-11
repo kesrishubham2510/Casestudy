@@ -1,6 +1,7 @@
 package com.myreflectionthoughts.covidstat.utility;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CacheKeyUtility {
 
@@ -20,15 +21,33 @@ public class CacheKeyUtility {
         return country + TWO_DAY_PREV_SUFFIX;
     }
 
-    public static String getKeyForRawAPIResponseForCountryVaccineCoverage(String country, LocalDate referencedDate) {
-        return String.format("%s_coverage_%s", country, referencedDate.toString());
+    public static String getKeyForCountryVaccineCoverageTrends(String country, String referencedDate) {
+        return String.format("%s_coverage_trend_%s", country, referencedDate);
     }
 
-    public static String getKeyForRawAPIResponseForGlobalVaccineCoverage(LocalDate referencedDate) {
-        return String.format("global_coverage_%s", referencedDate.toString());
+    public static String getKeyForGlobalVaccineCoverageTrends(String referencedDate) {
+        return String.format("global_coverage_trend_%s", referencedDate);
     }
 
-    public static String getKeyForComputedAPI(String country, LocalDate referencedDate) {
-        return String.format("%s_%s",country,referencedDate.toString());
+    public static String getKeyForComputedAPI(String country, String referencedDate) {
+        return String.format("%s_%s",country,referencedDate);
+    }
+
+    public static String getKeyForAlertMessage(String country, String referencedDate) {
+        return String.format("alert_message_%s_%s",country,referencedDate);
+    }
+
+    public static long calculateTTLTimestamp(int minutes){
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime midnightToday = now.toLocalDate().atStartOfDay(now.getZone());
+        ZonedDateTime ttl = null;
+
+        if(minutes==-1){
+           ttl = midnightToday.plusDays(1);
+        }else{
+           ttl = now.plusMinutes(minutes);
+        }
+
+        return ttl.toInstant().getEpochSecond();
     }
 }

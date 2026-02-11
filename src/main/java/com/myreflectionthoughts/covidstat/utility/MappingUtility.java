@@ -29,6 +29,15 @@ public class MappingUtility {
         return objectMapper.writeValueAsString(key);
     }
 
+    public static String convertToJsonStructure(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            // TODO: Add a logger
+            return "";
+        }
+    }
+
     private static class MappingUtilityInstance{
         private static final MappingUtility mappingUtility = new MappingUtility();
     }

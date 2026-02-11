@@ -53,8 +53,7 @@ public class RedisCacheService implements ICache<String, String> {
     public String get(String key) {
         String cachedResponse = this.jedis.get(key);
         logger.info("Cache | Key:- "+key+" retrieved successfully from redis server");
-        System.out.println("CachedResponse:- "+cachedResponse);
-        return null;
+        return cachedResponse;
     }
 
 
