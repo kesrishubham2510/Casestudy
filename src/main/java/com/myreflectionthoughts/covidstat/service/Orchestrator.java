@@ -10,6 +10,7 @@ import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
+import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
+
 
 @Service
 public class Orchestrator {
@@ -53,6 +55,7 @@ public class Orchestrator {
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
     }
 
+    // TODO: Make it handle error and graceful degradation
     public CovidStatResponse fetchStats(String country, String referencedDate){
 
         CovidStatResponse covidStatResponse = new CovidStatResponse();
@@ -87,7 +90,14 @@ public class Orchestrator {
             }
         }
 
-        ExternalAPIResponse latestStats = (ExternalAPIResponse) remoteDataSource.getLatestStats(country, 0L);
+        ExternalAPIResponse latestStats = null;
+
+        try {
+           latestStats = (ExternalAPIResponse) remoteDataSource.getLatestStats(country, 0L);
+        }catch (CaseStudyException exception){
+            return getDefaultResponse();
+        }
+        
         latestStats.setCountry(country);
 
         // Keeping TTL as 35 minutes, as every 30 minutes new data s pushed into the API
@@ -96,13 +106,24 @@ public class Orchestrator {
 
         Map<String, Trends> trendsMap = getTrendsFromCache(country, referencedDate);
 
-        if(Objects.isNull(trendsMap)) {
+        if (Objects.isNull(trendsMap)) {
+
+            ExternalAPIResponse countryVaccinationCoverage = null;
+            ExternalAPIResponse globalVaccinationCoverage = null;
 
             // get the vaccine coverage for country
-            ExternalAPIResponse countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, daysBack + MAX_DAY_TREND);
+            try {
+                countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, daysBack + MAX_DAY_TREND);
+            } catch (CaseStudyException exception) {
+                return getDefaultResponse();
+            }
 
             // get the vaccine coverage for global level
-            ExternalAPIResponse globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
+            try {
+                globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
+            } catch (CaseStudyException exception) {
+                return getDefaultResponse();
+            }
 
             Trends countryTrends = (Trends) trendEvaluation.calculate(countryVaccinationCoverage, new int[]{7, 14});
             Trends globalTrends = (Trends) trendEvaluation.calculate(globalVaccinationCoverage, new int[]{7, 14});
@@ -121,8 +142,15 @@ public class Orchestrator {
         // get the lastTwo days data
         String alertMessage = getLastTwoDayAlertFromCache(country, referencedDate);
 
-        if(Objects.isNull(alertMessage)) {
-            LastTwoDaysResponse lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
+        if (Objects.isNull(alertMessage)) {
+            LastTwoDaysResponse lastTwoDaysResponse = null;
+
+            try {
+                lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
+            } catch (CaseStudyException exception) {
+                return getDefaultResponse();
+            }
+
             lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
             alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
 
@@ -218,5 +246,10 @@ public class Orchestrator {
     private String getLatestStatFromCache(String country){
         String cacheKeyForLatestData = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
         return cacheService.get(cacheKeyForLatestData);
+    }
+    
+    private CovidStatResponse getDefaultResponse(){
+        // TODO:- Implement to return global default response
+        return null;
     }
 }
