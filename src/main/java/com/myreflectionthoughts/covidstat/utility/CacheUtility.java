@@ -1,6 +1,14 @@
 package com.myreflectionthoughts.covidstat.utility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.myreflectionthoughts.covidstat.contract.ICache;
+import com.myreflectionthoughts.covidstat.entity.Trends;
+import com.myreflectionthoughts.covidstat.service.RedisCacheService;
+import io.micrometer.common.util.StringUtils;
+
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CacheUtility {
 
@@ -48,5 +56,50 @@ public class CacheUtility {
         }
 
         return ttl.toInstant().getEpochSecond();
+    }
+
+    public static Map<String, Trends> getTrendsFromCache(ICache<String, String> cacheService, MappingUtility mappingUtility, String country, String referencedDate){
+
+        Map<String, Trends> trendsMap = new HashMap<>();
+
+        String cacheKeyForGlobalVaccineCoverageTrends = CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate);
+        String responseForGlobalVaccineCoverageTrends = cacheService.get(cacheKeyForGlobalVaccineCoverageTrends);
+        String cacheKeyForCountryVaccineCoverageTrends = CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate);
+        String responseForCountryVaccineCoverageTrends = cacheService.get(cacheKeyForCountryVaccineCoverageTrends);
+
+
+        if(StringUtils.isNotBlank(responseForCountryVaccineCoverageTrends)){
+            try {
+                trendsMap.put(country, mappingUtility.parseToPOJO(responseForCountryVaccineCoverageTrends, Trends.class));
+            } catch (JsonProcessingException e) {
+                // remove the invalid trend from cache
+                return null;
+            }
+        }else{
+            return null;
+        }
+
+        if(StringUtils.isNotBlank(responseForGlobalVaccineCoverageTrends)){
+            try {
+                trendsMap.put("global", mappingUtility.parseToPOJO(responseForGlobalVaccineCoverageTrends, Trends.class));
+            } catch (JsonProcessingException e) {
+                // remove the invalid trend from cache
+                return null;
+            }
+        }else{
+            return null;
+        }
+
+        return trendsMap.size()==1 ? null : trendsMap;
+    }
+
+    public static String getLastTwoDayAlertFromCache(ICache<String, String> cacheService, String country, String referencedDate){
+        String cacheKeyForAlertMessage = CacheUtility.getKeyForAlertMessage(country, referencedDate);
+        return cacheService.get(cacheKeyForAlertMessage);
+    }
+
+    public static String getLatestStatFromCache(ICache<String, String> cacheService, String country){
+        String cacheKeyForLatestData = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
+        return cacheService.get(cacheKeyForLatestData);
     }
 }
