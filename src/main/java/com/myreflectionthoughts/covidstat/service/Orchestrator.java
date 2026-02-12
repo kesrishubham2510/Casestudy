@@ -63,19 +63,11 @@ public class Orchestrator {
             referencedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         }
 
-        // Happy Path
-
-        /*
-        *  Generate the cache key
-        *  --> If entry exists, return the cached response
-        *  --> fetch the data, calculate everything, cache it and then return
-        *
-        */
         long daysBack = calculateTheDaysBack(referencedDate);
 
         try {
 
-            String responseForLatestDataFromCache = getLatestStatFromCache(country);
+            String responseForLatestDataFromCache = CacheUtility.getLatestStatFromCache(cacheService, country);
 
             if (StringUtils.isNotBlank(responseForLatestDataFromCache)) {
 
@@ -101,7 +93,7 @@ public class Orchestrator {
             // TODO: make it configurable
             cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(35));
 
-            Map<String, Trends> trendsMap = getTrendsFromCache(country, referencedDate);
+            Map<String, Trends> trendsMap = CacheUtility.getTrendsFromCache(cacheService, mappingUtility, country, referencedDate);
 
             if (Objects.isNull(trendsMap)) {
 
@@ -129,7 +121,7 @@ public class Orchestrator {
             }
 
             // get the lastTwo days data
-            String alertMessage = getLastTwoDayAlertFromCache(country, referencedDate);
+            String alertMessage = CacheUtility.getLastTwoDayAlertFromCache(cacheService, country, referencedDate);
 
             if (Objects.isNull(alertMessage)) {
 
@@ -154,7 +146,7 @@ public class Orchestrator {
             cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
 
         }catch (CaseStudyException exception){
-            return getDefaultResponse();
+            return getDefaultResponse(country);
         }
 
         return covidStatResponse;
@@ -191,53 +183,8 @@ public class Orchestrator {
 
         return alertMessage;
     }
-
-    private Map<String, Trends> getTrendsFromCache(String country, String referencedDate){
-
-        Map<String, Trends> trendsMap = new HashMap<>();
-
-        String cacheKeyForGlobalVaccineCoverageTrends = CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate);
-        String responseForGlobalVaccineCoverageTrends = cacheService.get(cacheKeyForGlobalVaccineCoverageTrends);
-        String cacheKeyForCountryVaccineCoverageTrends = CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate);
-        String responseForCountryVaccineCoverageTrends = cacheService.get(cacheKeyForCountryVaccineCoverageTrends);
-
-
-        if(StringUtils.isNotBlank(responseForCountryVaccineCoverageTrends)){
-            try {
-                trendsMap.put(country, mappingUtility.parseToPOJO(responseForCountryVaccineCoverageTrends, Trends.class));
-            } catch (JsonProcessingException e) {
-                // remove the invalid trend from cache
-                return null;
-            }
-        }else{
-            return null;
-        }
-
-        if(StringUtils.isNotBlank(responseForGlobalVaccineCoverageTrends)){
-            try {
-                trendsMap.put("global", mappingUtility.parseToPOJO(responseForGlobalVaccineCoverageTrends, Trends.class));
-            } catch (JsonProcessingException e) {
-                // remove the invalid trend from cache
-                return null;
-            }
-        }else{
-            return null;
-        }
-
-        return trendsMap.isEmpty() || trendsMap.size()==1 ? null : trendsMap;
-    }
-
-    private String getLastTwoDayAlertFromCache(String country, String referencedDate){
-        String cacheKeyForAlertMessage = CacheUtility.getKeyForAlertMessage(country, referencedDate);
-        return cacheService.get(cacheKeyForAlertMessage);
-    }
-
-    private String getLatestStatFromCache(String country){
-        String cacheKeyForLatestData = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
-        return cacheService.get(cacheKeyForLatestData);
-    }
     
-    private CovidStatResponse getDefaultResponse(){
+    private CovidStatResponse getDefaultResponse(String country){
         // TODO:- Implement to return global default response
         return null;
     }
