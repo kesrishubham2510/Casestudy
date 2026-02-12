@@ -114,9 +114,12 @@ public class Orchestrator {
 
                 // get the vaccine coverage for country
                 countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, daysBack + MAX_DAY_TREND);
+                covidStatResponse.setDosesAdministeredInCountry(countryVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
 
                 // get the vaccine coverage for global level
                 globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
+                covidStatResponse.setDosesAdministeredGlobally(globalVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
+
 
                 Trends countryTrends = (Trends) trendEvaluation.calculate(countryVaccinationCoverage, new int[]{7, 14});
                 Trends globalTrends = (Trends) trendEvaluation.calculate(globalVaccinationCoverage, new int[]{7, 14});
