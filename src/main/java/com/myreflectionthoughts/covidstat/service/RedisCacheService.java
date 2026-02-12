@@ -38,7 +38,7 @@ public class RedisCacheService implements ICache<String, String> {
         logger.info("Connecting to redis server at, host:- "+hostname+", port:- "+port+", ping:- "+jedis.ping());
 
         if(!pingResult.equalsIgnoreCase("PONG")){
-            throw new CaseStudyException(ServiceConstant._ERR_CACHE_CONNECTION_KEY, 400, "Could not connect with the redis server");
+            throw new CaseStudyException(ServiceConstant._ERR_CACHE_CONNECTION_KEY, 503, "Could not connect with the redis server");
         }
     }
 

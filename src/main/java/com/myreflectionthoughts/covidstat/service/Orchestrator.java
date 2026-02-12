@@ -1,6 +1,7 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.contract.ITrendEvaluation;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
@@ -31,7 +32,7 @@ public class Orchestrator {
 
     private final ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> trendEvaluation;
     private final IDataSource<ResponseWrapper> remoteDataSource;
-    private final Map<Integer, IExceptionHandler> exceptionHandlers;
+    private final Map<String, IExceptionHandler<CaseStudyException, Void>> exceptionHandlers;
     private final ICache<String, String> cacheService;
     private static final int MAX_DAY_TREND = 14;
 
@@ -42,16 +43,23 @@ public class Orchestrator {
                         IDataSource<ResponseWrapper> remoteDataSource,
                         ICache<String, String> cacheService,
                         // Will have to do injection using beanName here
-                        IExceptionHandler<String, Void> badRequesIExceptionHandler,
-                        IExceptionHandler<String, Void> connectionExceptionHandler){
+                        IExceptionHandler<CaseStudyException, Void> badRequesIExceptionHandler,
+                        IExceptionHandler<CaseStudyException, Void> connectionExceptionHandler,
+                        IExceptionHandler<CaseStudyException, Void> genericExceptionHandler,
+                        IExceptionHandler<CaseStudyException, Void> dataProcessingExceptionHandler){
 
         this.trendEvaluation = trendEvaluation;
         this.remoteDataSource = remoteDataSource;
         this.cacheService = cacheService;
         this.mappingUtility = MappingUtility.getMappingUtilityInstance();
         this.exceptionHandlers = new HashMap<>();
-        this.exceptionHandlers.put(4, badRequesIExceptionHandler);
-        this.exceptionHandlers.put(5, connectionExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_OCCURRED_KEY, genericExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_LATEST_STAT_KEY, dataProcessingExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_BAD_REQUEST_KEY, badRequesIExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_REQUEST_PROCESSING_ERROR_KEY, connectionExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, dataProcessingExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_CONNECT_KEY, connectionExceptionHandler);
+        this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, badRequesIExceptionHandler);
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
     }
 
@@ -146,6 +154,7 @@ public class Orchestrator {
             cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
 
         }catch (CaseStudyException exception){
+            exceptionHandlers.get(exception.getKey()).handleException(exception);
             return getDefaultResponse(country);
         }
 

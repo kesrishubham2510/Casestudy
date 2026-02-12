@@ -186,7 +186,7 @@ public class HttpConnectionTest {
         when(httpResponse.statusCode()).thenReturn(400);
 
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals("BAD_REQUEST", exception.getKey());
+        assertEquals(ServiceConstant._ERR_BAD_REQUEST_KEY, exception.getKey());
 
     }
 

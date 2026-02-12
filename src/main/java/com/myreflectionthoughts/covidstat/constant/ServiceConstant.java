@@ -9,5 +9,7 @@ public class ServiceConstant {
     public static final String _ERR_REQUEST_PROCESSING_ERROR_KEY = "REQUEST_PROCESSING_ERROR";
     public static final String _ERR_OCCURRED_KEY = "_ERR_OCCURRED";
     public static final String _ERR_CACHE_CONNECTION_KEY = "_ERR_CACHE_CONNECTION";
+    public static final String _ERR_BAD_REQUEST_KEY = "_ERR_BAD_REQUEST";
+
 
 }

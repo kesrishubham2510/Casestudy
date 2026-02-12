@@ -46,7 +46,7 @@ public class HttpConnection implements IRemoteConnection<String> {
         }
 
         if(httpResponse.statusCode()>=400 && httpResponse.statusCode()<500){
-            throw new CaseStudyException("BAD_REQUEST", httpResponse.statusCode(), httpResponse.body());
+            throw new CaseStudyException(ServiceConstant._ERR_BAD_REQUEST_KEY, httpResponse.statusCode(), httpResponse.body());
         }else if(httpResponse.statusCode()>=500 && httpResponse.statusCode()<600){
             throw new CaseStudyException(ServiceConstant._ERR_REQUEST_PROCESSING_ERROR_KEY, httpResponse.statusCode(), httpResponse.body());
         }else if(httpResponse.statusCode()!=200){
