@@ -3,6 +3,7 @@ package com.myreflectionthoughts.covidstat.service;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,6 +13,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.logging.Logger;
 
+@Service
 public class HttpConnection implements IRemoteConnection<String> {
     private final String hostName;
     private final HttpClient httpClient;

@@ -15,6 +15,7 @@ import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,16 +40,19 @@ public class Orchestrator {
     private final MappingUtility mappingUtility;
     private final Logger logger;
 
-    public Orchestrator(ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> trendEvaluation,
-                        IDataSource<ResponseWrapper> remoteDataSource,
+    public Orchestrator(IDataSource<ResponseWrapper> remoteDataSource,
                         ICache<String, String> cacheService,
                         // Will have to do injection using beanName here
+                        @Qualifier(value = "badRequestExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> badRequesIExceptionHandler,
+                        @Qualifier(value = "connectionExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> connectionExceptionHandler,
+                        @Qualifier(value = "dataProcessingExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> genericExceptionHandler,
+                        @Qualifier(value = "genericExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> dataProcessingExceptionHandler){
 
-        this.trendEvaluation = trendEvaluation;
+        this.trendEvaluation = NDayAverage.getNDayAverageInstance();
         this.remoteDataSource = remoteDataSource;
         this.cacheService = cacheService;
         this.mappingUtility = MappingUtility.getMappingUtilityInstance();

@@ -12,11 +12,13 @@ import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+@Service
 public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
     private final Logger logger;
@@ -30,9 +32,9 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         defaultHeaders.put("accept", "application/json");
     }
 
-    public RemoteDataSource(URLTemplateRegistry urlTemplateRegistry, IRemoteConnection<String> remoteConnection, MappingUtility mappingUtility){
-        this.urlTemplateRegistry = urlTemplateRegistry;
-        this.mappingUtility = mappingUtility;
+    public RemoteDataSource(IRemoteConnection<String> remoteConnection){
+        this.urlTemplateRegistry = URLTemplateRegistry.getURLUrlTemplateRegistryInstance();
+        this.mappingUtility = MappingUtility.getMappingUtilityInstance();
         this.remoteConnection = remoteConnection;
         this.logger = Logger.getLogger(RemoteDataSource.class.getSimpleName());
     }

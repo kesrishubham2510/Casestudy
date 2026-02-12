@@ -3,6 +3,7 @@ package com.myreflectionthoughts.covidstat.service;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 
 
 // For the current use-case, I'm using String as key
+@Service
 public class RedisCacheService implements ICache<String, String> {
 
     private int port;
@@ -17,7 +19,7 @@ public class RedisCacheService implements ICache<String, String> {
     private final Logger logger;
     private final Jedis jedis;
 
-    private RedisCacheService(){
+    public RedisCacheService(){
         logger = Logger.getLogger(RedisCacheService.class.getSimpleName());
         init();
         jedis = new Jedis(hostname, port);
@@ -55,15 +57,5 @@ public class RedisCacheService implements ICache<String, String> {
         String cachedResponse = this.jedis.get(key);
         logger.info("Cache | Key:- "+key+" retrieved successfully from redis server");
         return cachedResponse;
-    }
-
-
-    // Singleton pattern
-    private static class ICacheInstanceManager{
-        private static final RedisCacheService cacheInstance = new RedisCacheService();
-    }
-
-    public static RedisCacheService getRedisCacheInstance(){
-        return ICacheInstanceManager.cacheInstance;
     }
 }
