@@ -3,6 +3,7 @@ package com.myreflectionthoughts.covidstat.controller;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 import com.myreflectionthoughts.covidstat.service.Orchestrator;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,9 @@ public class CovidStatController {
         this.orchestrator = orchestrator;
     }
 
-    @GetMapping(ServiceConstant.API_VERSION + "/countries/{country}/?referencedDate={referencedDate}")
+
+    @ApiResponse(responseCode = "200", description = "Countries latest stats on covid")
+    @GetMapping(ServiceConstant.API_VERSION + "/countries/{country}")
     public ResponseEntity<CovidStatResponse> getCountryStats(@PathVariable ("country") String country,
                                                              @RequestParam (value = "referencedDate", required = false, defaultValue = "") String referencedDate
                                                              ){
