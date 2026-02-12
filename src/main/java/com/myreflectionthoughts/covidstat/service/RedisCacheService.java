@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import redis.clients.jedis.Jedis;
@@ -37,7 +38,7 @@ public class RedisCacheService implements ICache<String, String> {
         logger.info("Connecting to redis server at, host:- "+hostname+", port:- "+port+", ping:- "+jedis.ping());
 
         if(!pingResult.equalsIgnoreCase("PONG")){
-            throw new CaseStudyException("_ERR_CACHE_CONNECTION", 400, "Could not connect with the redis server");
+            throw new CaseStudyException(ServiceConstant._ERR_CACHE_CONNECTION_KEY, 400, "Could not connect with the redis server");
         }
     }
 

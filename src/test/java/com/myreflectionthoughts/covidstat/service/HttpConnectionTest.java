@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.enums.USECASE;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
@@ -168,7 +169,7 @@ public class HttpConnectionTest {
         when(mockHttpClient.send(any(HttpRequest.class), any())).thenThrow(new IOException("Test IOException"));
 
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals("_ERR_CONNECT", exception.getKey());
+        assertEquals(ServiceConstant._ERR_CONNECT_KEY, exception.getKey());
         assertEquals(-1, exception.getStatusCode());
     }
 
@@ -202,7 +203,7 @@ public class HttpConnectionTest {
         when(httpResponse.statusCode()).thenReturn(500);
 
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals("REQUEST_PROCESSING_ERROR", exception.getKey());
+        assertEquals(ServiceConstant._ERR_REQUEST_PROCESSING_ERROR_KEY, exception.getKey());
 
     }
 
@@ -219,7 +220,7 @@ public class HttpConnectionTest {
         when(httpResponse.statusCode()).thenReturn(600);
 
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals("_ERR_COCCURED", exception.getKey());
+        assertEquals(ServiceConstant._ERR_OCCURRED_KEY, exception.getKey());
 
     }
 

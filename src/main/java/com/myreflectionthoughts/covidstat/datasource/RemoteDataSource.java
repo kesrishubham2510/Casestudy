@@ -1,6 +1,7 @@
 package com.myreflectionthoughts.covidstat.datasource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
@@ -48,7 +49,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
         } catch (JsonProcessingException e) {
             logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
-            throw new CaseStudyException("PARSING_ERROR_LATEST_STAT", 400, "Error occurred while parsing response for latest stats");
+            throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_LATEST_STAT_KEY, 400, "Error occurred while parsing response for latest stats");
         }
 
         return externalAPIResponse;
@@ -71,7 +72,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
         } catch (JsonProcessingException e) {
             logger.severe("Error occurred while parsing response for vaccine coverage, ex:- "+e.getMessage());
-            throw new CaseStudyException("PARSING_ERROR_VACCINE_COVERAGE", 400, "Error occurred while parsing response for vaccine coverage stats");
+            throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, 400, "Error occurred while parsing response for vaccine coverage stats");
         }
 
         return externalAPIResponse;
@@ -100,7 +101,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
         } catch (JsonProcessingException e) {
             logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
-            throw new CaseStudyException("PARSING_ERROR_DAILY_STAT", 400, "Error occurred while parsing response for daily stats");
+            throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
         }
 
         return lastTwoDaysResponse;

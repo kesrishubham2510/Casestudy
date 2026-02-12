@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
 import com.myreflectionthoughts.covidstat.contract.IRemoteConnection;
 import com.myreflectionthoughts.covidstat.datasource.RemoteDataSource;
@@ -51,7 +52,7 @@ public class RemoteDataSourceTest {
     public void testGetLatestStats_Throws_Fails_LatestStat_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getLatestStats(country, 0L));
-        assertEquals("PARSING_ERROR_LATEST_STAT", exception.getKey());
+        assertEquals(ServiceConstant._ERR_PARSING_ERROR_LATEST_STAT_KEY, exception.getKey());
     }
 
     @Test
@@ -64,7 +65,7 @@ public class RemoteDataSourceTest {
     public void testGetLatestStats_Throws_Fails_VaccineCoverage_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getVaccineCoverage(country, 0L));
-        assertEquals("PARSING_ERROR_VACCINE_COVERAGE", exception.getKey());
+        assertEquals(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, exception.getKey());
     }
 
     @Test
@@ -83,7 +84,7 @@ public class RemoteDataSourceTest {
     public void testGetLatestStats_Throws_Fails_DailyAlert_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getDataForAlerts(country, 0L));
-        assertEquals("PARSING_ERROR_DAILY_STAT", exception.getKey());
+        assertEquals(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, exception.getKey());
     }
 
 
