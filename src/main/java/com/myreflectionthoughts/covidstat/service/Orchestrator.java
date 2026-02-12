@@ -73,101 +73,90 @@ public class Orchestrator {
         */
         long daysBack = calculateTheDaysBack(referencedDate);
 
-        String responseForLatestDataFromCache = getLatestStatFromCache(country);
+        try {
 
-        if (StringUtils.isNotBlank(responseForLatestDataFromCache)) {
+            String responseForLatestDataFromCache = getLatestStatFromCache(country);
 
-            String cacheKeyForResponse = CacheUtility.getKeyForComputedAPI(country, referencedDate);
-            String responseFromCache = cacheService.get(cacheKeyForResponse);
+            if (StringUtils.isNotBlank(responseForLatestDataFromCache)) {
 
-            if (StringUtils.isNotBlank(responseFromCache)) {
-                try {
-                    return mappingUtility.parseToPOJO(responseFromCache, CovidStatResponse.class);
-                } catch (JsonProcessingException e) {
-                    // remove the invalidated response from the cache
-                    logger.warning("The cached response for Key:- " + cacheKeyForResponse + ", has been deleted");
+                String cacheKeyForResponse = CacheUtility.getKeyForComputedAPI(country, referencedDate);
+                String responseFromCache = cacheService.get(cacheKeyForResponse);
+
+                if (StringUtils.isNotBlank(responseFromCache)) {
+                    try {
+                        return mappingUtility.parseToPOJO(responseFromCache, CovidStatResponse.class);
+                    } catch (JsonProcessingException e) {
+                        // remove the invalidated response from the cache
+                        logger.warning("The cached response for Key:- " + cacheKeyForResponse + ", has been deleted");
+                    }
                 }
             }
-        }
 
-        ExternalAPIResponse latestStats = null;
+            ExternalAPIResponse latestStats = null;
 
-        try {
-           latestStats = (ExternalAPIResponse) remoteDataSource.getLatestStats(country, 0L);
+            latestStats = (ExternalAPIResponse) remoteDataSource.getLatestStats(country, 0L);
+            latestStats.setCountry(country);
+
+            // Keeping TTL as 35 minutes, as every 30 minutes new data s pushed into the API
+            // TODO: make it configurable
+            cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(35));
+
+            Map<String, Trends> trendsMap = getTrendsFromCache(country, referencedDate);
+
+            if (Objects.isNull(trendsMap)) {
+
+                ExternalAPIResponse countryVaccinationCoverage = null;
+                ExternalAPIResponse globalVaccinationCoverage = null;
+
+                // get the vaccine coverage for country
+                countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, daysBack + MAX_DAY_TREND);
+
+                // get the vaccine coverage for global level
+                globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
+
+                Trends countryTrends = (Trends) trendEvaluation.calculate(countryVaccinationCoverage, new int[]{7, 14});
+                Trends globalTrends = (Trends) trendEvaluation.calculate(globalVaccinationCoverage, new int[]{7, 14});
+
+                trendsMap = new HashMap<>();
+
+                trendsMap.put(country, countryTrends);
+                trendsMap.put("global", globalTrends);
+
+                // Keeping the TTL as 60 hours because, a referenced historical trend will never change
+                // TODO: make it configurable
+                cacheService.put(CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate), MappingUtility.convertToJsonStructure(countryTrends), CacheUtility.calculateTTLTimestamp(60 * 60));
+                cacheService.put(CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate), MappingUtility.convertToJsonStructure(globalTrends), CacheUtility.calculateTTLTimestamp(60 * 60));
+            }
+
+            // get the lastTwo days data
+            String alertMessage = getLastTwoDayAlertFromCache(country, referencedDate);
+
+            if (Objects.isNull(alertMessage)) {
+
+                LastTwoDaysResponse lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
+
+                lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
+                alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
+
+                // TODO: make it configurable
+                cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(35));
+            }
+
+
+            covidStatResponse.setCountry(country);
+            covidStatResponse.setTrends(trendsMap);
+            covidStatResponse.setActiveAsToday(String.valueOf(latestStats.getActive()));
+            covidStatResponse.setNoOfCases(String.valueOf(latestStats.getCases()));
+            covidStatResponse.setNoOfRecoveries(String.valueOf(latestStats.getRecovered()));
+            covidStatResponse.setAlertMessage(alertMessage);
+
+            // TODO: make it configurable
+            cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
+
         }catch (CaseStudyException exception){
             return getDefaultResponse();
         }
-        
-        latestStats.setCountry(country);
 
-        // Keeping TTL as 35 minutes, as every 30 minutes new data s pushed into the API
-        // TODO: make it configurable
-        cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(35));
-
-        Map<String, Trends> trendsMap = getTrendsFromCache(country, referencedDate);
-
-        if (Objects.isNull(trendsMap)) {
-
-            ExternalAPIResponse countryVaccinationCoverage = null;
-            ExternalAPIResponse globalVaccinationCoverage = null;
-
-            // get the vaccine coverage for country
-            try {
-                countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, daysBack + MAX_DAY_TREND);
-            } catch (CaseStudyException exception) {
-                return getDefaultResponse();
-            }
-
-            // get the vaccine coverage for global level
-            try {
-                globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
-            } catch (CaseStudyException exception) {
-                return getDefaultResponse();
-            }
-
-            Trends countryTrends = (Trends) trendEvaluation.calculate(countryVaccinationCoverage, new int[]{7, 14});
-            Trends globalTrends = (Trends) trendEvaluation.calculate(globalVaccinationCoverage, new int[]{7, 14});
-
-            trendsMap = new HashMap<>();
-
-            trendsMap.put(country, countryTrends);
-            trendsMap.put("global", globalTrends);
-
-            // Keeping the TTL as 60 hours because, a referenced historical trend will never change
-            // TODO: make it configurable
-            cacheService.put(CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate), MappingUtility.convertToJsonStructure(countryTrends), CacheUtility.calculateTTLTimestamp(60*60));
-            cacheService.put(CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate), MappingUtility.convertToJsonStructure(globalTrends), CacheUtility.calculateTTLTimestamp(60*60));
-        }
-
-        // get the lastTwo days data
-        String alertMessage = getLastTwoDayAlertFromCache(country, referencedDate);
-
-        if (Objects.isNull(alertMessage)) {
-            LastTwoDaysResponse lastTwoDaysResponse = null;
-
-            try {
-                lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
-            } catch (CaseStudyException exception) {
-                return getDefaultResponse();
-            }
-
-            lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
-            alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
-
-            // TODO: make it configurable
-            cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(35));
-        }
-
-
-        covidStatResponse.setCountry(country);
-        covidStatResponse.setTrends(trendsMap);
-        covidStatResponse.setActiveAsToday(String.valueOf(latestStats.getActive()));
-        covidStatResponse.setNoOfCases(String.valueOf(latestStats.getCases()));
-        covidStatResponse.setNoOfRecoveries(String.valueOf(latestStats.getRecovered()));
-        covidStatResponse.setAlertMessage(alertMessage);
-
-        // TODO: make it configurable
-        cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
         return covidStatResponse;
     }
 
