@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+// TODO: Make it mocked test
 public class HttpConnectionTest {
 
     private final HttpConnection httpConnection;

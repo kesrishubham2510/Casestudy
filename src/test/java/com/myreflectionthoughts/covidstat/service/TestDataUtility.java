@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+
+import java.util.List;
 
 import static org.apache.logging.log4j.util.LoaderUtil.getClassLoader;
 
@@ -63,7 +63,7 @@ public class TestDataUtility {
         }
     }
 
-    private static String getFileContent(String filePath){
+    public static String getFileContent(String filePath){
 
         try {
             InputStream is = TestDataUtility.class

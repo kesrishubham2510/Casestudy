@@ -71,7 +71,7 @@ public class Orchestrator {
     public CovidStatResponse fetchStats(String country, String referencedDate){
 
         CovidStatResponse covidStatResponse = new CovidStatResponse();
-        if(referencedDate==null){
+        if(StringUtils.isEmpty(referencedDate)){
             referencedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         }
 
@@ -117,7 +117,7 @@ public class Orchestrator {
                 covidStatResponse.setDosesAdministeredInCountry(countryVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
 
                 // get the vaccine coverage for global level
-                globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(null, daysBack + MAX_DAY_TREND);
+                globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage("global", daysBack + MAX_DAY_TREND);
                 covidStatResponse.setDosesAdministeredGlobally(globalVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
 
 
@@ -170,8 +170,6 @@ public class Orchestrator {
 
 
     private long calculateTheDaysBack(String referencedDate){
-        if(StringUtils.isEmpty(referencedDate))
-            return 0L;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -202,6 +200,6 @@ public class Orchestrator {
     
     private CovidStatResponse getDefaultResponse(String country){
         // TODO:- Implement to return global default response
-        return null;
+        return new CovidStatResponse();
     }
 }

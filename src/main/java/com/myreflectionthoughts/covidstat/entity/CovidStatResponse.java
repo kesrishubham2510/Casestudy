@@ -14,4 +14,6 @@ public class CovidStatResponse extends ResponseWrapper{
     private String dosesAdministeredGlobally;
     private Map<String, Trends> trends;
     private String alertMessage;
+    // TODO: add logic to populate this
+    private boolean serverFromCache;
 }

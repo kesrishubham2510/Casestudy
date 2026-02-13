@@ -149,7 +149,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
     private String prepareURL(String url, String country, String lastDays, String fullData){
 
-        if(StringUtils.isBlank(country)){
+        if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase("global")){
             url = url.replace("countries/{country}", "");
         }else {
             url = url.replace("{country}", country);
