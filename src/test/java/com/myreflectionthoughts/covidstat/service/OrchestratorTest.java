@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.*;
 import com.myreflectionthoughts.covidstat.datasource.RemoteDataSource;
@@ -36,6 +37,7 @@ public class OrchestratorTest {
     private final ICache<String, String> mockedCacheService;
     // Will have to do injection using beanName here
     private final IRemoteConnection<String> mockedHttpConnection;
+    private final CacheTTLConfig cacheTTLConfig;
     private final Orchestrator orchestrator;
     private final Orchestrator mockedOrchestrator;
 
@@ -53,14 +55,9 @@ public class OrchestratorTest {
         this.mockedHttpConnection = Mockito.mock(HttpConnection.class);
         this.mockedRemoteDataSource = new RemoteDataSource(mockedHttpConnection);
         this.mockedCacheService = Mockito.mock(RedisCacheService.class);
-        this.orchestrator = new Orchestrator(remoteDataSource, cacheService, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
-        this.mockedOrchestrator = new Orchestrator(mockedRemoteDataSource, mockedCacheService, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
-    }
-
-//    @Test
-    public void testFetchStats(){
-        CovidStatResponse statResponse =  this.orchestrator.fetchStats("India", null);
-        System.out.println(statResponse);
+        this.cacheTTLConfig = Mockito.mock(CacheTTLConfig.class);
+        this.orchestrator = new Orchestrator(remoteDataSource, cacheService, cacheTTLConfig, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
+        this.mockedOrchestrator = new Orchestrator(mockedRemoteDataSource, mockedCacheService, cacheTTLConfig, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
     }
 
     @Test
@@ -77,6 +74,7 @@ public class OrchestratorTest {
         lastTwoDaysResponse.getLastTwoDaysResponse().add(TestDataUtility.convertTOPOJO(dayBeforeYesterdayStat, ExternalAPIResponse.class));
 
         when(cacheService.get(anyString())).thenReturn(null);
+        when(cacheTTLConfig.getLatestStatCountry()).thenReturn(35);
         when(remoteDataSource.getLatestStats(anyString(), anyLong())).thenReturn(TestDataUtility.convertTOPOJO(latestCovidResponse, ExternalAPIResponse.class));
         doNothing().when(cacheService).put(anyString(), anyString(), anyLong());
         when(remoteDataSource.getVaccineCoverage(anyString(), anyLong())).thenReturn(TestDataUtility.convertTOPOJO(countryVaccineCoverage, ExternalAPIResponse.class));

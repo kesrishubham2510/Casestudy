@@ -1,6 +1,7 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.contract.ITrendEvaluation;
@@ -39,10 +40,12 @@ public class Orchestrator {
     private static final int MAX_DAY_TREND = 14;
 
     private final MappingUtility mappingUtility;
+    private final CacheTTLConfig cacheTTLConfig;
     private final Logger logger;
 
     public Orchestrator(IDataSource<ResponseWrapper> remoteDataSource,
                         ICache<String, String> cacheService,
+                        CacheTTLConfig cacheTTLConfig,
                         // Will have to do injection using beanName here
                         @Qualifier(value = "badRequestExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> badRequesIExceptionHandler,
@@ -65,6 +68,7 @@ public class Orchestrator {
         this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, dataProcessingExceptionHandler);
         this.exceptionHandlers.put(ServiceConstant._ERR_CONNECT_KEY, connectionExceptionHandler);
         this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, badRequesIExceptionHandler);
+        this.cacheTTLConfig = cacheTTLConfig;
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
     }
 
@@ -105,8 +109,7 @@ public class Orchestrator {
             latestStats.setCountry(country);
 
             // Keeping TTL as 35 minutes, as every 30 minutes new data s pushed into the API
-            // TODO: make it configurable
-            cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(35));
+            cacheService.put(CacheUtility.getKeyForRawAPIResponseForCurrentStat(country), MappingUtility.convertToJsonStructure(latestStats), CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getLatestStatCountry()));
 
             Map<String, Trends> trendsMap = CacheUtility.getTrendsFromCache(cacheService, mappingUtility, country, referencedDate);
 
@@ -132,10 +135,9 @@ public class Orchestrator {
                 trendsMap.put(country, countryTrends);
                 trendsMap.put("global", globalTrends);
 
-                // Keeping the TTL as 60 hours because, a referenced historical trend will never change
-                // TODO: make it configurable
-                cacheService.put(CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate), MappingUtility.convertToJsonStructure(countryTrends), CacheUtility.calculateTTLTimestamp(60 * 60));
-                cacheService.put(CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate), MappingUtility.convertToJsonStructure(globalTrends), CacheUtility.calculateTTLTimestamp(60 * 60));
+                // Keeping the TTL as 120 hours because, a referenced historical trend will never change
+                cacheService.put(CacheUtility.getKeyForCountryVaccineCoverageTrends(country, referencedDate), MappingUtility.convertToJsonStructure(countryTrends), CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getVaccineCoverageTrends()));
+                cacheService.put(CacheUtility.getKeyForGlobalVaccineCoverageTrends(referencedDate), MappingUtility.convertToJsonStructure(globalTrends), CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getVaccineCoverageTrends()));
             }
 
             // get the lastTwo days data
@@ -148,8 +150,7 @@ public class Orchestrator {
                 lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
                 alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
 
-                // TODO: make it configurable
-                cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(35));
+                cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getAlertMessage()));
             }
 
 
@@ -160,8 +161,7 @@ public class Orchestrator {
             covidStatResponse.setNoOfRecoveries(String.valueOf(latestStats.getRecovered()));
             covidStatResponse.setAlertMessage(alertMessage);
 
-            // TODO: make it configurable
-            cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(35));
+            cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getLatestStatCountry()));
 
         }catch (CaseStudyException exception){
             exceptionHandlers.get(exception.getKey()).handleException(exception);
