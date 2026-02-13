@@ -16,4 +16,6 @@ public class CovidStatResponse extends ResponseWrapper{
     private String alertMessage;
     // TODO: add logic to populate this
     private boolean serverFromCache;
+    // TODO: to know the referenced date of the cached data
+    private String referencedDate;
 }

@@ -13,6 +13,7 @@ import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
+import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,7 +89,9 @@ public class Orchestrator {
 
                 if (StringUtils.isNotBlank(responseFromCache)) {
                     try {
-                        return mappingUtility.parseToPOJO(responseFromCache, CovidStatResponse.class);
+                        covidStatResponse = mappingUtility.parseToPOJO(responseFromCache, CovidStatResponse.class);
+                        covidStatResponse.setServerFromCache(true);
+                        return covidStatResponse;
                     } catch (JsonProcessingException e) {
                         // remove the invalidated response from the cache
                         logger.warning("The cached response for Key:- " + cacheKeyForResponse + ", has been deleted");
@@ -199,7 +202,10 @@ public class Orchestrator {
     }
     
     private CovidStatResponse getDefaultResponse(String country){
-        // TODO:- Implement to return global default response
-        return new CovidStatResponse();
+        CovidStatResponse covidStatResponse = new CovidStatResponse();
+        String staticResponse = DataUtility.getFileContent("data/StaticCovidStatResponse.json");
+        covidStatResponse = DataUtility.convertTOPOJO(staticResponse, CovidStatResponse.class);
+        covidStatResponse.setServerFromCache(true);
+        return covidStatResponse;
     }
 }
