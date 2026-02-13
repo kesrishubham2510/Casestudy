@@ -1,0 +1,45 @@
+{
+  "country": "India",
+  "noOfCases": 45035393,
+  "noOfRecoveries": 0,
+  "activeAsToday": 44501823,
+  "dosesAdministeredInCountry": 2206565971,
+  "dosesAdministeredGlobally": 2206565971,
+  "trends": {
+    "global": {
+      "trends": [
+        {
+          "dailyAverage": 191209.57,
+          "changePercentage": 0.03299056263627468,
+          "direction": "DOWN",
+          "alertMessage": "Situation Worsening"
+        },
+        {
+          "dailyAverage": 128468.71,
+          "changePercentage": 0.03883706894189888,
+          "direction": "DOWN",
+          "alertMessage": "Situation Worsening"
+        }
+      ]
+    },
+    "India": {
+      "trends": [
+        {
+          "dailyAverage": 191209.57,
+          "changePercentage": 0.03299056263627468,
+          "direction": "DOWN",
+          "alertMessage": "Situation Worsening"
+        },
+        {
+          "dailyAverage": 128468.71,
+          "changePercentage": 0.03883706894189888,
+          "direction": "DOWN",
+          "alertMessage": "Situation Worsening"
+        }
+      ]
+    }
+  },
+  "alertMessage": "",
+  "serverFromCache": false,
+  "referencedDate" : "12-02-2026"
+}
