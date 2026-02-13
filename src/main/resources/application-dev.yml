@@ -1,0 +1,8 @@
+# in minutes
+cache:
+  ttl:
+    latestStatCountry: 35
+    oneDayPrevious: 1440
+    twoDayPrevious: 2880
+    vaccineCoverageTrends: 7200
+    alertMessage: 35
