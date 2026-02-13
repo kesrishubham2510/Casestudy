@@ -6,3 +6,6 @@ cache:
     twoDayPrevious: 2880
     vaccineCoverageTrends: 7200
     alertMessage: 35
+
+  host: localhost
+  port: 6379
