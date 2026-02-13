@@ -1,5 +1,7 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.config.CacheConfig;
+import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
@@ -18,8 +20,10 @@ public class RedisCacheService implements ICache<String, String> {
     private String hostname;
     private final Logger logger;
     private final Jedis jedis;
+    private final CacheConfig cacheConfig;
 
-    public RedisCacheService(){
+    public RedisCacheService(CacheConfig cacheConfig){
+        this.cacheConfig = cacheConfig;
         logger = Logger.getLogger(RedisCacheService.class.getSimpleName());
         init();
         jedis = new Jedis(hostname, port);
@@ -29,8 +33,8 @@ public class RedisCacheService implements ICache<String, String> {
     @Override
     public void init() {
         // Logic to initialise the connection properties
-        this.hostname = "localhost";
-        this.port = 6379;
+        this.hostname = cacheConfig.getHost();
+        this.port = cacheConfig.getPort();
     }
 
     @Override
