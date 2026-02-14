@@ -1,0 +1,27 @@
+version: doc"3"
+
+services:
+  redis-client:
+    image: redis
+    container_name: "redis"
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - casestudy
+
+  # need to get the image name rectified
+  api-covidstat:
+    build: .
+    # specifying the image-name for the image built using dockerfile
+    image: "casestudy_covidstat"
+    container_name: "covidstat_service"
+    networks:
+      - casestudy
+    ports:
+      - "8080:8080"
+
+
+networks:
+  casestudy:
+    external: true
