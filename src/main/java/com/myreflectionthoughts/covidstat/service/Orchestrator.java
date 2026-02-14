@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -70,6 +71,20 @@ public class Orchestrator {
         this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, badRequesIExceptionHandler);
         this.cacheTTLConfig = cacheTTLConfig;
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
+    }
+
+    public List<CovidStatResponse> fetchComparisionStats(String[] countries, String referenceDate){
+        List<CovidStatResponse> statResponses = new ArrayList<>();
+        CovidStatResponse response = null;
+
+        for(String country : countries) {
+            if(StringUtils.isNotEmpty(country)) {
+                response = fetchStats(country, referenceDate);
+                statResponses.add(response);
+            }
+        }
+
+        return statResponses;
     }
 
     // TODO: Make it handle error and graceful degradation
