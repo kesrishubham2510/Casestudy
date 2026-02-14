@@ -76,7 +76,9 @@ public class Orchestrator {
     public CovidStatResponse fetchStats(String country, String referencedDate){
 
         CovidStatResponse covidStatResponse = new CovidStatResponse();
+
         if(StringUtils.isEmpty(referencedDate)){
+            logger.info("ReferencedDate is empty/null");
             referencedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         }
 
@@ -88,11 +90,16 @@ public class Orchestrator {
 
             if (StringUtils.isNotBlank(responseForLatestDataFromCache)) {
 
+                logger.info("Found latest data in the cache");
+
                 String cacheKeyForResponse = CacheUtility.getKeyForComputedAPI(country, referencedDate);
                 String responseFromCache = cacheService.get(cacheKeyForResponse);
 
                 if (StringUtils.isNotBlank(responseFromCache)) {
                     try {
+
+                        logger.info("Pre-computed response for country:- "+cacheKeyForResponse+", retrieved successfully");
+
                         covidStatResponse = mappingUtility.parseToPOJO(responseFromCache, CovidStatResponse.class);
                         covidStatResponse.setServerFromCache(true);
                         return covidStatResponse;
@@ -145,6 +152,8 @@ public class Orchestrator {
 
             if (Objects.isNull(alertMessage)) {
 
+                logger.info("Pre-computed alert message not found:- "+country+", referencedDate:- "+referencedDate);
+
                 LastTwoDaysResponse lastTwoDaysResponse = (LastTwoDaysResponse) remoteDataSource.getDataForAlerts(country, 0L);
 
                 lastTwoDaysResponse.getLastTwoDaysResponse().add(latestStats);
@@ -164,10 +173,12 @@ public class Orchestrator {
             cacheService.put(CacheUtility.getKeyForComputedAPI(country, referencedDate), MappingUtility.convertToJsonStructure(covidStatResponse), CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getLatestStatCountry()));
 
         }catch (CaseStudyException exception){
+            logger.severe("Exception occurred | returning default static response");
             exceptionHandlers.get(exception.getKey()).handleException(exception);
             return getDefaultResponse(country);
         }
 
+        logger.info("Computed vaccine coverage trends for country:- "+country+", referencedDate:- "+referencedDate);
         return covidStatResponse;
     }
 

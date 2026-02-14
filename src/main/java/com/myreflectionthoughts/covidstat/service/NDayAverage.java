@@ -10,10 +10,14 @@ import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> {
 
-    private NDayAverage(){}
+    private final Logger logger;
+    private NDayAverage(){
+        this.logger = Logger.getLogger(NDayAverage.class.getSimpleName());
+    }
 
     @Override
     public Trends calculate(ExternalAPIResponse data, int[] days) {
@@ -32,6 +36,7 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
 
     private Trend calculateTrend(List<CoverageStatTimeline> stats){
 
+        logger.info("Starting calculation for "+stats.size()+" days stats...");
         Trend trend = new Trend();
 
         int itr, size;
@@ -70,6 +75,7 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
             trend.setDirection("DOWN");
         }
 
+        logger.info("Finished calculation for "+stats.size()+" days stats...");
         return trend;
     }
 

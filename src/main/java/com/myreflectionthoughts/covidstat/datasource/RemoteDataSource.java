@@ -54,6 +54,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_LATEST_STAT_KEY, 400, "Error occurred while parsing response for latest stats");
         }
 
+        logger.info("Latest stat response for:- { "+country+" }, received/evaluated successfully");
         return externalAPIResponse;
     }
 
@@ -69,6 +70,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
             if(StringUtils.isEmpty(country)){
                 response = MappingUtility.adjustGlobalVaccineCoverageResponse(response);
+                logger.info("Adjusted global response json");
             }
 
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
@@ -77,6 +79,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, 400, "Error occurred while parsing response for vaccine coverage stats");
         }
 
+        logger.info("Vaccine coverage response for:- { "+country+" }, received/evaluated successfully");
         return externalAPIResponse;
     }
 
@@ -106,6 +109,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
         }
 
+        logger.info("Last two days data for alert, country:- { "+country+" }, received/evaluated successfully");
         return lastTwoDaysResponse;
     }
 

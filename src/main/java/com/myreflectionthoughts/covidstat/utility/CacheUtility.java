@@ -9,12 +9,14 @@ import io.micrometer.common.util.StringUtils;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class CacheUtility {
 
     private static final String CURRENT_STAT_SUFFIX = "_currentstat";
     private static final String ONE_DAY_PREV_SUFFIX = "_oneday_prev";
     private static final String TWO_DAY_PREV_SUFFIX = "_twoday_prev";
+    private static final Logger logger = Logger.getLogger(CacheUtility.class.getSimpleName());
 
     public static String getKeyForRawAPIResponseForCurrentStat(String country) {
         return country + CURRENT_STAT_SUFFIX;
@@ -90,6 +92,7 @@ public class CacheUtility {
             return null;
         }
 
+        logger.info("Pre-computed vaccine coverage trends for country:- "+country+", referencedDate:- "+referencedDate+" retrieved successfully");
         return trendsMap.size()==1 ? null : trendsMap;
     }
 
