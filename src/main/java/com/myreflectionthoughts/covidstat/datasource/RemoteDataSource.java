@@ -68,7 +68,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
         try {
 
-            if(StringUtils.isEmpty(country)){
+            if(StringUtils.isNotEmpty(country) && country.equalsIgnoreCase("global")){
                 response = MappingUtility.adjustGlobalVaccineCoverageResponse(response);
                 logger.info("Adjusted global response json");
             }
