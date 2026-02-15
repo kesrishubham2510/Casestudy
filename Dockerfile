@@ -4,11 +4,11 @@ FROM eclipse-temurin:17-jdk
 # copy all the complete folder into a place in ubuntu image
 RUN mkdir -p /app/jar
 
-COPY ./build/libs/covidstat-0.0.1-SNAPSHOT.jar /app/jar/libs
+COPY ./covidstat-0.0.1-SNAPSHOT.jar /app/jar
 
 RUN  echo pwd
 
-WORKDIR /app/jar/libs
+WORKDIR /app/jar
 
 EXPOSE 8080
 
