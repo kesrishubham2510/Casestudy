@@ -1,0 +1,38 @@
+pipeline{
+  agent any
+
+  stages{
+   stage('Clean'){
+               steps{
+                  dir('covidstat'){
+                     sh './gradlew clean'
+                  }
+               }
+           }
+
+           stage('Test'){
+                steps{
+                    dir('covidstat'){
+                       sh './gradlew test'
+                   }
+               }
+           }
+
+           stage('Build'){
+                steps{
+                    dir('covidstat'){
+                       sh './gradlew build'
+                   }
+               }
+           }
+
+//           stage('Build'){
+//                 steps{
+//                     dir('covidstat'){
+//                         sh './gradlew buildAndTagDockerImage'
+//                     }
+//                 }
+//           }
+
+  }
+}

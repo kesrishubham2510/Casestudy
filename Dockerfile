@@ -14,6 +14,7 @@ RUN chmod +x gradlew
 RUN ./gradlew build
 
 RUN cp -r ./build/libs /app/jar
+RUN rm -rf /home
 
 WORKDIR /app/jar/libs
 

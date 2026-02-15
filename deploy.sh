@@ -1,2 +1,2 @@
-docker create network casestudy
+docker network create casestudy
 docker compose up

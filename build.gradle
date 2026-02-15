@@ -35,3 +35,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register('buildAndTagDockerImage', Exec) {
+	commandLine 'docker', 'build',
+			'-t', "covidstat:0.0.1", '.'
+
+	workingDir '.'
+	dependsOn(tasks.named('jar'))
+}
