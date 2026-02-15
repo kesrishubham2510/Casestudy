@@ -1,20 +1,10 @@
 FROM eclipse-temurin:17-jdk
 
+# TODO: Remove these steps, these are redundant
 # copy all the complete folder into a place in ubuntu image
-RUN mkdir -p /home/developer/casestudy/covidstat
 RUN mkdir -p /app/jar
 
-COPY ./ /home/developer/casestudy/covidstat
-
-# navigate to the repo and run ./gradlew build
-WORKDIR ./home/developer/casestudy/covidstat
-
-# pick up the .jar file from the /build folder
-RUN chmod +x gradlew
-RUN ./gradlew build
-
 RUN cp -r ./build/libs /app/jar
-RUN rm -rf /home
 
 WORKDIR /app/jar/libs
 
