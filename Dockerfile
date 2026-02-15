@@ -4,8 +4,7 @@ FROM eclipse-temurin:17-jdk
 # copy all the complete folder into a place in ubuntu image
 RUN mkdir -p /app/jar
 
-WORKDIR /var/jenkins_home/workspace/covidstat/build/libs
-RUN cp -r *.jar /app/jar
+RUN cp -r ./build/libs/ /app/jar/libs
 
 WORKDIR /app/jar/libs
 
