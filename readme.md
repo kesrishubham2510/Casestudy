@@ -67,7 +67,7 @@ Client -> Controller Layer -> Orchestrator (Use Case Coordination) -> Cache Laye
 
 ### 🐳 Run with Docker
 ```
-docker-compose up --build
+docker-compose up .
 ```
 
 ### 🧠 Design Patterns Used
