@@ -7,5 +7,5 @@ cache:
     vaccineCoverageTrends: 7200
     alertMessage: 35
 
-  host: redis
+  host: redis_covidstat
   port: 6379
