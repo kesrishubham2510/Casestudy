@@ -4,7 +4,9 @@ FROM eclipse-temurin:17-jdk
 # copy all the complete folder into a place in ubuntu image
 RUN mkdir -p /app/jar
 
-RUN cp -r ./build/libs/ /app/jar/libs
+COPY ./build/libs/covidstat-0.0.1-SNAPSHOT.jar /app/jar/libs
+
+RUN  echo pwd
 
 WORKDIR /app/jar/libs
 
