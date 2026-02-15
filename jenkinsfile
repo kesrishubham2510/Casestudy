@@ -21,11 +21,11 @@ pipeline{
                }
            }
 
-//           stage('Build'){
-//                 steps{
-//                         sh './gradlew buildAndTagDockerImage'
-//                 }
-//           }
+          stage('Build'){
+                steps{
+                   sh './gradlew buildAndTagDockerImage'
+                }
+          }
 
   }
 }
