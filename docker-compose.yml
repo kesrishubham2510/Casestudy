@@ -4,7 +4,7 @@ services:
   api-covidstat:
     build: .
     # specifying the image-name for the image built using dockerfile
-    image: "casestudy_covidstat"
+    image: "covidstat"
     container_name: "covidstat_service"
     networks:
       - casestudy
