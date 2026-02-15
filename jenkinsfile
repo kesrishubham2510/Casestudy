@@ -21,7 +21,7 @@ pipeline{
                }
            }
 
-          stage('Build'){
+          stage('Containerize'){
                 steps{
                    sh './gradlew buildAndTagDockerImage'
                 }
