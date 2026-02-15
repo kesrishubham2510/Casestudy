@@ -37,8 +37,7 @@ tasks.named('test') {
 }
 
 tasks.register('buildAndTagDockerImage', Exec) {
-	commandLine 'docker', 'build',
-			'-t', "covidstat:0.0.1", '.'
+	commandLine 'docker', 'compose', 'up', '.'
 
 	workingDir '.'
 	dependsOn(tasks.named('jar'))
