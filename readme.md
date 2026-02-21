@@ -44,6 +44,7 @@ Client -> Controller Layer -> Orchestrator (Use Case Coordination) -> Cache Laye
 - Gradle
 - Docker & Docker Compose
 - OPEN API
+- JUnit
 - Jenkins
 
 ---
@@ -52,7 +53,7 @@ Client -> Controller Layer -> Orchestrator (Use Case Coordination) -> Cache Laye
 
 ### Prerequisites
 
-- Java 17+
+- Java 17
 - Gradle
 - Docker
 
@@ -85,6 +86,8 @@ Strategy Design Pattern --> To extend contract for Cache, DataSource, ExceptionH
 Proxy Design Pattern --> To connect Orchestrator with the data source
 
 Singleton Design Pattern --> To manage single instances of MappingUtility, URLTemplateRegistry
+
+Facade Design pattern --> Orchestrator class abstracts the need to call data source, retrieve/push from/to cache by the controller
 ```
 
 ### Testing
