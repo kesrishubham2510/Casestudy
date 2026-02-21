@@ -2,6 +2,7 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
+import com.myreflectionthoughts.covidstat.config.CountryConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.contract.ITrendEvaluation;
@@ -13,6 +14,7 @@ import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import com.myreflectionthoughts.covidstat.exception.CountryNotFoundException;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
@@ -43,10 +45,12 @@ public class Orchestrator {
     private final MappingUtility mappingUtility;
     private final CacheTTLConfig cacheTTLConfig;
     private final Logger logger;
+    private final CountryConfig countryConfig;
 
     public Orchestrator(IDataSource<ResponseWrapper> remoteDataSource,
                         ICache<String, String> cacheService,
                         CacheTTLConfig cacheTTLConfig,
+                        CountryConfig countryConfig,
                         // Will have to do injection using beanName here
                         @Qualifier(value = "badRequestExceptionHandler")
                         IExceptionHandler<CaseStudyException, Void> badRequesIExceptionHandler,
@@ -70,6 +74,7 @@ public class Orchestrator {
         this.exceptionHandlers.put(ServiceConstant._ERR_CONNECT_KEY, connectionExceptionHandler);
         this.exceptionHandlers.put(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, badRequesIExceptionHandler);
         this.cacheTTLConfig = cacheTTLConfig;
+        this.countryConfig = countryConfig;
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
     }
 
@@ -78,6 +83,9 @@ public class Orchestrator {
         CovidStatResponse response = null;
 
         for(String country : countries) {
+
+            validateInputCountry(country);
+
             if(StringUtils.isNotEmpty(country)) {
                 response = fetchStats(country, referenceDate);
                 statResponses.add(response);
@@ -91,6 +99,8 @@ public class Orchestrator {
     public CovidStatResponse fetchStats(String country, String referencedDate){
 
         CovidStatResponse covidStatResponse = new CovidStatResponse();
+
+        validateInputCountry(country);
 
         if(StringUtils.isEmpty(referencedDate)){
             logger.info("ReferencedDate is empty/null");
@@ -238,7 +248,11 @@ public class Orchestrator {
 
             cacheService.put(CacheUtility.getKeyForAlertMessage(country, referencedDate), alertMessage, CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getAlertMessage()));
         }
+    }
 
-
+    private void validateInputCountry(String country){
+        if(!countryConfig.getSupportedCountries().contains(country)){
+            throw new CountryNotFoundException(String.format("%s, is not supported", country));
+        }
     }
 }

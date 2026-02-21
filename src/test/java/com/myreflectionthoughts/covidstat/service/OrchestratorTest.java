@@ -1,6 +1,7 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
+import com.myreflectionthoughts.covidstat.config.CountryConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.*;
 import com.myreflectionthoughts.covidstat.datasource.RemoteDataSource;
@@ -16,6 +17,9 @@ import com.myreflectionthoughts.covidstat.handler.GenericExceptionHandler;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -40,6 +44,9 @@ public class OrchestratorTest {
     private final CacheTTLConfig cacheTTLConfig;
     private final Orchestrator orchestrator;
     private final Orchestrator mockedOrchestrator;
+    private final CountryConfig countryConfig;
+    private final List<String> supportedCountries;
+
 
 
     public OrchestratorTest() {
@@ -50,14 +57,18 @@ public class OrchestratorTest {
         this.connectionExceptionHandler = Mockito.mock(ConnectionExceptionHandler.class);
         this.genericExceptionHandler = Mockito.mock(GenericExceptionHandler.class);
         this.dataProcessingExceptionHandler = Mockito.mock(DataProcessingExceptionHandler.class);
+        this.countryConfig = Mockito.mock(CountryConfig.class);
 
 
         this.mockedHttpConnection = Mockito.mock(HttpConnection.class);
         this.mockedRemoteDataSource = new RemoteDataSource(mockedHttpConnection);
         this.mockedCacheService = Mockito.mock(RedisCacheService.class);
         this.cacheTTLConfig = Mockito.mock(CacheTTLConfig.class);
-        this.orchestrator = new Orchestrator(remoteDataSource, cacheService, cacheTTLConfig, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
-        this.mockedOrchestrator = new Orchestrator(mockedRemoteDataSource, mockedCacheService, cacheTTLConfig, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
+        this.supportedCountries = new ArrayList<>();
+
+        this.orchestrator = new Orchestrator(remoteDataSource, cacheService, cacheTTLConfig, countryConfig, badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
+        this.mockedOrchestrator = new Orchestrator(mockedRemoteDataSource, mockedCacheService, cacheTTLConfig, countryConfig,  badRequesIExceptionHandler, connectionExceptionHandler, genericExceptionHandler, dataProcessingExceptionHandler);
+        supportedCountries.add("India");
     }
 
     @Test
@@ -73,6 +84,7 @@ public class OrchestratorTest {
         lastTwoDaysResponse.getLastTwoDaysResponse().add(TestDataUtility.convertTOPOJO(yesterdayStat, ExternalAPIResponse.class));
         lastTwoDaysResponse.getLastTwoDaysResponse().add(TestDataUtility.convertTOPOJO(dayBeforeYesterdayStat, ExternalAPIResponse.class));
 
+        when(countryConfig.getSupportedCountries()).thenReturn(supportedCountries);
         when(cacheService.get(anyString())).thenReturn(null);
         when(cacheTTLConfig.getLatestStatCountry()).thenReturn(35);
         when(remoteDataSource.getLatestStats(anyString(), anyLong())).thenReturn(TestDataUtility.convertTOPOJO(latestCovidResponse, ExternalAPIResponse.class));
@@ -93,7 +105,7 @@ public class OrchestratorTest {
         String referenceDate = "";
         String latestCovidResponse = TestDataUtility.getFileContent("data/LatestCovidStat.json");
         String mockedComputedResponse = TestDataUtility.getFileContent("data/MockedCovidStatResponse.json");
-
+        when(countryConfig.getSupportedCountries()).thenReturn(supportedCountries);
         when(cacheService.get(anyString())).thenReturn("{}");
         when(cacheService.get(eq(country))).thenReturn(mockedComputedResponse);
 
@@ -114,6 +126,7 @@ public class OrchestratorTest {
         lastTwoDaysResponse.getLastTwoDaysResponse().add(TestDataUtility.convertTOPOJO(yesterdayStat, ExternalAPIResponse.class));
         lastTwoDaysResponse.getLastTwoDaysResponse().add(TestDataUtility.convertTOPOJO(dayBeforeYesterdayStat, ExternalAPIResponse.class));
 
+        when(countryConfig.getSupportedCountries()).thenReturn(supportedCountries);
         when(cacheService.get(anyString())).thenReturn(null);
         when(remoteDataSource.getLatestStats(anyString(), anyLong())).thenThrow(new CaseStudyException(ServiceConstant._ERR_BAD_REQUEST_KEY, 400, "BadRequest"));
         doNothing().when(cacheService).put(anyString(), anyString(), anyLong());
