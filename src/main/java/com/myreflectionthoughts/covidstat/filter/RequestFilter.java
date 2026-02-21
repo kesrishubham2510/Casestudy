@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -31,10 +32,11 @@ public class RequestFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request){
         String requestURI = request.getRequestURI();
-        return requestURI.contains("/swagger") || requestURI.contains("/swagger-ui") || requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui.html");
+        return request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name()) || requestURI.contains("/swagger") || requestURI.contains("/swagger-ui") || requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui.html");
     }
 
     private void checkAPIKey(HttpServletRequest request, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
         String requestApiKey = request.getHeader("API-KEY");
 
         if(StringUtils.isEmpty(requestApiKey)){
