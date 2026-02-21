@@ -133,6 +133,10 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
         url = url.replace("{country}", country);
 
+        if(country.contains(" ")){
+            url = url.replace(" ", "%20");
+        }
+
         if(StringUtils.isBlank(yesterday)){
             url = url.replace("yesterday={yesterday}&", "");
         }else{
@@ -157,6 +161,10 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
             url = url.replace("countries/{country}", "");
         }else {
             url = url.replace("{country}", country);
+        }
+
+        if(country.contains(" ")){
+            url = url.replace(" ", "%20");
         }
 
         // by default API returns latest of last 30 days data it has
