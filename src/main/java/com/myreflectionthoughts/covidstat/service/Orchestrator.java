@@ -81,8 +81,20 @@ public class Orchestrator {
     public List<CovidStatResponse> fetchComparisionStats(String[] countries, String referenceDate){
         List<CovidStatResponse> statResponses = new ArrayList<>();
         CovidStatResponse response = null;
+        int nonEmptyCountryStrings = 0;
 
         for(String country : countries) {
+            if(StringUtils.isNotEmpty(country)) {
+                validateInputCountry(country);
+                nonEmptyCountryStrings++;
+            }
+        }
+
+        if(nonEmptyCountryStrings<2){
+            throw new CountryNotFoundException("Need atleast two countries to compare");
+        }
+
+            for(String country : countries) {
 
             validateInputCountry(country);
 
@@ -252,7 +264,7 @@ public class Orchestrator {
 
     private void validateInputCountry(String country){
         if(!countryConfig.getSupportedCountries().contains(country)){
-            throw new CountryNotFoundException(String.format("%s, is not supported", country));
+            throw new CountryNotFoundException(String.format("Country:- %s, is not supported", country));
         }
     }
 }
