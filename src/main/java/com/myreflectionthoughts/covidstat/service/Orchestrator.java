@@ -96,8 +96,6 @@ public class Orchestrator {
 
             for(String country : countries) {
 
-            validateInputCountry(country);
-
             if(StringUtils.isNotEmpty(country)) {
                 response = fetchStats(country, referenceDate);
                 statResponses.add(response);
