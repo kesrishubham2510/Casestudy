@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class RemoteDataSourceTest {
+  class RemoteDataSourceTest {
 
     private final URLTemplateRegistry urlTemplateRegistry;
     private final IRemoteConnection<String> remoteConnection;
@@ -32,7 +32,7 @@ public class RemoteDataSourceTest {
     private final RemoteDataSource remoteDataSource;
     private final String country;
 
-    public RemoteDataSourceTest(){
+     RemoteDataSourceTest(){
         this.urlTemplateRegistry = URLTemplateRegistry.getURLUrlTemplateRegistryInstance();
         this.remoteConnection = new HttpConnection(HttpClient.newHttpClient());
         this.mappingUtility = MappingUtility.getMappingUtilityInstance();
@@ -43,45 +43,45 @@ public class RemoteDataSourceTest {
     }
 
     @Test
-    public void testGetLatestStats(){
+     void testGetLatestStats(){
        ExternalAPIResponse externalAPIResponse = remoteDataSource.getLatestStats(country, 0L);
        assertEquals(externalAPIResponse.getCountry(), "India");
     }
 
     @Test
-    public void testGetLatestStats_Throws_Fails_LatestStat_Parsing(){
+     void testGetLatestStats_Throws_Fails_LatestStat_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getLatestStats(country, 0L));
         assertEquals(ServiceConstant._ERR_PARSING_ERROR_LATEST_STAT_KEY, exception.getKey());
     }
 
     @Test
-    public void testGetVaccineCoverageForAMonth(){
+     void testGetVaccineCoverageForAMonth(){
         ExternalAPIResponse externalAPIResponse = remoteDataSource.getVaccineCoverage(country, 0L);
         assertEquals(externalAPIResponse.getTimeline().size(), 30);
     }
 
     @Test
-    public void testGetLatestStats_Throws_Fails_VaccineCoverage_Parsing(){
+     void testGetLatestStats_Throws_Fails_VaccineCoverage_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getVaccineCoverage(country, 0L));
         assertEquals(ServiceConstant._ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY, exception.getKey());
     }
 
     @Test
-    public void testGetVaccineCoverageForLast3Days(){
+     void testGetVaccineCoverageForLast3Days(){
         ExternalAPIResponse externalAPIResponse = remoteDataSource.getVaccineCoverage(country, 3L);
         assertEquals(externalAPIResponse.getTimeline().size(), 3);
     }
 
     @Test
-    public void testGetDataForAlerts(){
+     void testGetDataForAlerts(){
         LastTwoDaysResponse lastTwoDaysResponse = remoteDataSource.getDataForAlerts(country, 0L);
         assertNotEquals(lastTwoDaysResponse.getLastTwoDaysResponse().get(0).getUpdated(), lastTwoDaysResponse.getLastTwoDaysResponse().get(1).getUpdated());
     }
 
     @Test
-    public void testGetLatestStats_Throws_Fails_DailyAlert_Parsing(){
+     void testGetLatestStats_Throws_Fails_DailyAlert_Parsing(){
         when(mockRemoteConnection.executeGetRequest(anyString(), anyMap())).thenReturn("{]");
         CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> mockRemoteDataSource.getDataForAlerts(country, 0L));
         assertEquals(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, exception.getKey());

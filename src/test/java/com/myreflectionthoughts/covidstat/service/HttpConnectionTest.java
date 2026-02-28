@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 // TODO: Make it mocked test
-public class HttpConnectionTest {
+  class HttpConnectionTest {
 
     private final HttpConnection httpConnection;
     private final HttpConnection mockHttpConnection;
@@ -28,7 +28,7 @@ public class HttpConnectionTest {
     private final URLTemplateRegistry urlTemplateRegistry;
     private final HttpResponse httpResponse;
 
-    public HttpConnectionTest(){
+     HttpConnectionTest(){
 
         this.httpConnection = new HttpConnection(HttpClient.newHttpClient());
         this.mockHttpClient = Mockito.mock(HttpClient.class);
@@ -38,7 +38,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest(){
+     void testExecuteGetRequest(){
 
         String country = "India";
         String yesterday = "";
@@ -69,7 +69,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_EmptyYesterday(){
+     void testExecuteGetRequest_EmptyYesterday(){
 
         String country = "India";
         String yesterday = "";
@@ -105,7 +105,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_EmptyTwoDays(){
+     void testExecuteGetRequest_EmptyTwoDays(){
 
         String country = "India";
         String yesterday = "true";
@@ -141,7 +141,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_ThrowsCaseStudyException() throws IOException, InterruptedException {
+     void testExecuteGetRequest_ThrowsCaseStudyException() throws IOException, InterruptedException {
 
         String country = "India";
         String yesterday = "";
@@ -175,7 +175,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_ThrowsCaseStudyException_BadRequest() throws IOException, InterruptedException {
+     void testExecuteGetRequest_ThrowsCaseStudyException_BadRequest() throws IOException, InterruptedException {
 
 
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
@@ -192,7 +192,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_ThrowsCaseStudyException_RequestProcessingException() throws IOException, InterruptedException {
+     void testExecuteGetRequest_ThrowsCaseStudyException_RequestProcessingException() throws IOException, InterruptedException {
 
 
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
@@ -209,7 +209,7 @@ public class HttpConnectionTest {
     }
 
     @Test
-    public void testExecuteGetRequest_ThrowsCaseStudyException_Err() throws IOException, InterruptedException {
+     void testExecuteGetRequest_ThrowsCaseStudyException_Err() throws IOException, InterruptedException {
 
 
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);

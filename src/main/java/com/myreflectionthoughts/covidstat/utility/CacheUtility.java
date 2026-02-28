@@ -18,6 +18,8 @@ public class CacheUtility {
     private static final String TWO_DAY_PREV_SUFFIX = "_twoday_prev";
     private static final Logger logger = Logger.getLogger(CacheUtility.class.getSimpleName());
 
+    private CacheUtility(){}
+
     public static String getKeyForRawAPIResponseForCurrentStat(String country) {
         return country + CURRENT_STAT_SUFFIX;
     }

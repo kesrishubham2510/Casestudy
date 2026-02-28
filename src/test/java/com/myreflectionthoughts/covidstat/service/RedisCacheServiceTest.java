@@ -10,7 +10,7 @@ import redis.clients.jedis.params.SetParams;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class RedisCacheServiceTest {
+ class RedisCacheServiceTest {
 
     @Test
     void testConstructorAndPing_Success() {

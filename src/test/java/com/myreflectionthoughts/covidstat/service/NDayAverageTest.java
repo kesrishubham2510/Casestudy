@@ -6,22 +6,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NDayAverageTest {
+  class NDayAverageTest {
 
     private final NDayAverage nDayAverage;
 
-    public NDayAverageTest(){
+     NDayAverageTest(){
         this.nDayAverage = NDayAverage.getNDayAverageInstance();
     }
     @Test
-    public void testCalculateNDayGlobalTrend(){
+     void testCalculateNDayGlobalTrend(){
         ExternalAPIResponse response = prepareGlobalVaccineCoverageResponse();
         Trends calculatedTrends = this.nDayAverage.calculate(response, new int[] {7, 14, 20});
         assertEquals(3, calculatedTrends.getTrends().size());
     }
 
     @Test
-    public void testCalculateNDayIndiaTrend(){
+     void testCalculateNDayIndiaTrend(){
         ExternalAPIResponse response = prepareVaccineCoverage_India_Response();
         Trends calculatedTrends = this.nDayAverage.calculate(response, new int[] {7, 14, 20});
         assertEquals(3, calculatedTrends.getTrends().size());

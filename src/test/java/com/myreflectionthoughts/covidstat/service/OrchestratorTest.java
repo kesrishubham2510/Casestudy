@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-public class OrchestratorTest {
+  class OrchestratorTest {
 
     private final IDataSource<ResponseWrapper> remoteDataSource;
     private final ICache<String, String> cacheService;
@@ -49,7 +49,7 @@ public class OrchestratorTest {
 
 
 
-    public OrchestratorTest() {
+     OrchestratorTest() {
         this.httpConnection = Mockito.mock(HttpConnection.class);
         this.remoteDataSource = Mockito.mock(RemoteDataSource.class);
         this.cacheService = Mockito.mock(RedisCacheService.class);
@@ -72,7 +72,7 @@ public class OrchestratorTest {
     }
 
     @Test
-    public void testFetchStats_WithoutCache(){
+     void testFetchStats_WithoutCache(){
 
         String referenceDate = null;
         String latestCovidResponse = TestDataUtility.getFileContent("data/LatestCovidStat.json");
@@ -99,7 +99,7 @@ public class OrchestratorTest {
     }
 
     @Test
-    public void testFetchStats_CacheHasLatestStat(){
+     void testFetchStats_CacheHasLatestStat(){
 
         String country = "India";
         String referenceDate = "";
@@ -114,7 +114,7 @@ public class OrchestratorTest {
     }
 
     @Test
-    public void testFetchStats_CacheHasLatestStat_HandlesCaseStudyException(){
+     void testFetchStats_CacheHasLatestStat_HandlesCaseStudyException(){
 
         String referenceDate = null;
         String latestCovidResponse = TestDataUtility.getFileContent("data/LatestCovidStat.json");

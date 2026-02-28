@@ -2,6 +2,7 @@ package com.myreflectionthoughts.covidstat.constant;
 
 public class ServiceConstant {
 
+    private ServiceConstant(){}
     public static final String _ERR_PARSING_ERROR_LATEST_STAT_KEY = "PARSING_ERROR_LATEST_STAT";
     public static final String _ERR_PARSING_ERROR_VACCINE_COVERAGE_KEY = "PARSING_ERROR_VACCINE_COVERAGE";
     public static final String _ERR_PARSING_ERROR_DAILY_STAT_KEY = "PARSING_ERROR_DAILY_STAT";

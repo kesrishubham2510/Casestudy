@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class DataUtilityTest {
+ class DataUtilityTest {
 
     @Test
-    public void testConvertTOPOJO_Success() {
+     void testConvertTOPOJO_Success() {
         String json = "{\"name\":\"India\", \"cases\":5000}";
         Map<String, Object> result = DataUtility.convertTOPOJO(json, Map.class);
 
@@ -19,13 +19,13 @@ public class DataUtilityTest {
 
 
     @Test
-    public void testConvertTOPOJO_InvalidJson_ThrowsException() {
+     void testConvertTOPOJO_InvalidJson_ThrowsException() {
         String malformedJson = "{ name: India }"; // Missing quotes
         assertThrows(RuntimeException.class, ()-> DataUtility.convertTOPOJO(malformedJson, Map.class));
     }
 
     @Test
-    public void testGetFileContent_Success() {
+     void testGetFileContent_Success() {
         String content = DataUtility.getFileContent("data/StaticCovidStatResponse.json");
 
         assertNotNull(content);
@@ -35,13 +35,13 @@ public class DataUtilityTest {
 
 
     @Test
-    public void testGetFileContent_FileNotFound_ThrowsException() {
+     void testGetFileContent_FileNotFound_ThrowsException() {
        assertThrows(RuntimeException.class, ()->  DataUtility.getFileContent("non-existent-file.json"));
     }
 
 
     @Test
-    public void testFileToPOJO_Integration() {
+     void testFileToPOJO_Integration() {
         String content = DataUtility.getFileContent("data/StaticCovidStatResponse.json");
         Map<String, Object> result = DataUtility.convertTOPOJO(content, Map.class);
 
