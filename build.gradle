@@ -42,6 +42,23 @@ jacocoTestReport {
 	}
 }
 
+sonarqube {
+	properties {
+		property "sonar.exclusions", """
+            **/config/**,
+            **/constant/**,
+            **/entity/**,
+            **/exception/**,
+            **/handler/**',
+            CovidstatApplication.*
+        """
+		property "sonar.projectKey", "Covidstat-be"
+		property "sonar.host.url", "http://localhost:9000"
+		property "sonar.coverage.jacoco.xmlReportPaths",
+				"$buildDir/reports/jacoco/test/jacocoTestReport.xml"
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation  'org.springframework.boot:spring-boot-starter-web'
