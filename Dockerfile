@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:17-jre
 
 # TODO: Remove these steps, these are redundant
 # copy all the complete folder into a place in ubuntu image
