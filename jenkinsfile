@@ -1,6 +1,10 @@
 pipeline{
   agent any
 
+  environment {
+        SONAR_TOKEN = credentials('sonar-server-user-token')
+  }
+
   stages{
    stage('Clean'){
                steps{
@@ -10,9 +14,15 @@ pipeline{
 
            stage('Test'){
                 steps{
-                      sh './gradlew test'
+                      sh './gradlew test jacocoTestReport'
 
                }
+           }
+
+           stage('Sonar'){
+                steps{
+                      sh './gradlew sonar  -Dsonar.login=$SONAR_TOKEN'
+                }
            }
 
            stage('Build'){
