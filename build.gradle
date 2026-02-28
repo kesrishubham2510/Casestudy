@@ -53,7 +53,7 @@ sonarqube {
             CovidstatApplication.*
         """
 		property "sonar.projectKey", "Covidstat-be"
-		property "sonar.host.url", "http://localhost:9000"
+		property "sonar.host.url", "sonar-server"
 		property "sonar.coverage.jacoco.xmlReportPaths",
 				"$buildDir/reports/jacoco/test/jacocoTestReport.xml"
 	}
