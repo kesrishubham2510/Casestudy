@@ -3,7 +3,6 @@ package com.myreflectionthoughts.covidstat.utility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
