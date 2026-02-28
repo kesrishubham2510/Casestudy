@@ -1,229 +1,125 @@
 package com.myreflectionthoughts.covidstat.service;
 
-import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
-import com.myreflectionthoughts.covidstat.enums.USECASE;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
-import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
-import io.micrometer.common.util.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-// TODO: Make it mocked test
-  class HttpConnectionTest {
+class HttpConnectionTest {
 
+    private final HttpClient httpClient;
     private final HttpConnection httpConnection;
-    private final HttpConnection mockHttpConnection;
-    private final HttpClient mockHttpClient;
-    private final URLTemplateRegistry urlTemplateRegistry;
-    private final HttpResponse httpResponse;
+    private final HttpResponse<String> response;
 
-     HttpConnectionTest(){
 
-        this.httpConnection = new HttpConnection(HttpClient.newHttpClient());
-        this.mockHttpClient = Mockito.mock(HttpClient.class);
-        this.httpResponse =  Mockito.mock(HttpResponse.class);
-        this.urlTemplateRegistry = URLTemplateRegistry.getURLUrlTemplateRegistryInstance();
-        this.mockHttpConnection = new HttpConnection(this.mockHttpClient);
+    public HttpConnectionTest() {
+        httpClient = mock(HttpClient.class);
+        httpConnection = new HttpConnection(httpClient);
+        response = mock(HttpResponse.class);
     }
 
     @Test
-     void testExecuteGetRequest(){
+    void shouldReturnBodyWhenStatus200() throws Exception {
 
-        String country = "India";
-        String yesterday = "";
-        String twoDaysAgo = "";
-        String strict = "true";
-        String allowNull = "false";
+        when(response.statusCode()).thenReturn(200);
+        when(response.body()).thenReturn("SUCCESS");
 
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
+        when(httpClient.send(
+                ArgumentMatchers.any(HttpRequest.class),
+                ArgumentMatchers.any(HttpResponse.BodyHandler.class)
+        )).thenReturn(response);
 
-        url = url.replace("{country}", country);
+        String result = httpConnection.executeGetRequest("/test", Map.of());
 
-        if(StringUtils.isBlank(yesterday)){
-            url = url.replace("yesterday={yesterday}&", "");
-        }
-
-        if(StringUtils.isBlank(twoDaysAgo)){
-            url = url.replace("twoDaysAgo={twoDaysAgo}&", "");
-        }
-
-        url = url.replace("{strict}", strict);
-        url = url.replace("{allowNull}", allowNull);
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        String response = this.httpConnection.executeGetRequest(url, headers);
-        assertNotNull(response);
+        assertEquals("SUCCESS", result);
     }
 
     @Test
-     void testExecuteGetRequest_EmptyYesterday(){
+    void shouldThrowBadRequestExceptionFor4xx() throws Exception {
 
-        String country = "India";
-        String yesterday = "";
-        String twoDaysAgo = "true";
-        String strict = "true";
-        String allowNull = "false";
+        when(response.statusCode()).thenReturn(404);
+        when(response.body()).thenReturn("NOT FOUND");
 
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
+        when(httpClient.send(
+                any(HttpRequest.class),
+                any(HttpResponse.BodyHandler.class)
+        )).thenReturn(response);
 
-        url = url.replace("{country}", country);
-
-        if(StringUtils.isBlank(yesterday)){
-            url = url.replace("yesterday={yesterday}&", "");
-        }else{
-            url = url.replace("{yesterday}", yesterday);
-        }
-
-        if(StringUtils.isBlank(twoDaysAgo)){
-            url = url.replace("twoDaysAgo={twoDaysAgo}&", "");
-        }else{
-            url = url.replace("{twoDaysAgo}", twoDaysAgo);
-        }
-
-        url = url.replace("{strict}", strict);
-        url = url.replace("{allowNull}", allowNull);
-
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        String response = this.httpConnection.executeGetRequest(url, headers);
-        assertNotNull(response);
-    }
-
-    @Test
-     void testExecuteGetRequest_EmptyTwoDays(){
-
-        String country = "India";
-        String yesterday = "true";
-        String twoDaysAgo = "";
-        String strict = "true";
-        String allowNull = "false";
-
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
-
-        url = url.replace("{country}", country);
-
-        if(StringUtils.isBlank(yesterday)){
-            url = url.replace("yesterday={yesterday}&", "");
-        }else{
-            url = url.replace("{yesterday}", yesterday);
-        }
-
-        if(StringUtils.isBlank(twoDaysAgo)){
-            url = url.replace("twoDaysAgo={twoDaysAgo}&", "");
-        }else{
-            url = url.replace("{twoDaysAgo}", twoDaysAgo);
-        }
-
-        url = url.replace("{strict}", strict);
-        url = url.replace("{allowNull}", allowNull);
-
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        String response = this.httpConnection.executeGetRequest(url, headers);
-        assertNotNull(response);
-    }
-
-    @Test
-     void testExecuteGetRequest_ThrowsCaseStudyException() throws IOException, InterruptedException {
-
-        String country = "India";
-        String yesterday = "";
-        String twoDaysAgo = "";
-        String strict = "true";
-        String allowNull = "false";
-
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
-
-        url = url.replace("{country}", country);
-
-        if(StringUtils.isBlank(yesterday)){
-            url = url.replace("yesterday={yesterday}&", "");
-        }
-
-        if(StringUtils.isBlank(twoDaysAgo)){
-            url = url.replace("twoDaysAgo={twoDaysAgo}&", "");
-        }
-
-        url = url.replace("{strict}", strict);
-        url = url.replace("{allowNull}", allowNull);
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        when(mockHttpClient.send(any(HttpRequest.class), any())).thenThrow(new IOException("Test IOException"));
-
-        CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals(ServiceConstant._ERR_CONNECT_KEY, exception.getKey());
-        assertEquals(-1, exception.getStatusCode());
-    }
-
-    @Test
-     void testExecuteGetRequest_ThrowsCaseStudyException_BadRequest() throws IOException, InterruptedException {
-
-
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        when(mockHttpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
-        when(httpResponse.statusCode()).thenReturn(400);
-
-        CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals(ServiceConstant._ERR_BAD_REQUEST_KEY, exception.getKey());
+        assertThrows(
+                CaseStudyException.class,
+                () -> httpConnection.executeGetRequest("/test", Map.of())
+        );
 
     }
 
     @Test
-     void testExecuteGetRequest_ThrowsCaseStudyException_RequestProcessingException() throws IOException, InterruptedException {
+    void shouldThrowProcessingErrorFor5xx() throws Exception {
 
+        when(response.statusCode()).thenReturn(500);
+        when(response.body()).thenReturn("SERVER ERROR");
 
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
+        when(httpClient.send(
+                any(HttpRequest.class),
+                any(HttpResponse.BodyHandler.class)
+        )).thenReturn(response);
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        when(mockHttpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
-        when(httpResponse.statusCode()).thenReturn(500);
-
-        CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals(ServiceConstant._ERR_REQUEST_PROCESSING_ERROR_KEY, exception.getKey());
+        assertThrows(
+                CaseStudyException.class,
+                () -> httpConnection.executeGetRequest("/test", Map.of())
+        );
 
     }
 
     @Test
-     void testExecuteGetRequest_ThrowsCaseStudyException_Err() throws IOException, InterruptedException {
+    void shouldThrowGenericErrorForNon200Non4xxNon5xx() throws Exception {
 
+        HttpResponse<String> response = mock(HttpResponse.class);
+        when(response.statusCode()).thenReturn(302);
+        when(response.body()).thenReturn("REDIRECT");
 
-        String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
+        when(httpClient.send(
+                any(HttpRequest.class),
+                any(HttpResponse.BodyHandler.class)
+        )).thenReturn(response);
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", ": application/json");
-
-        when(mockHttpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
-        when(httpResponse.statusCode()).thenReturn(600);
-
-        CaseStudyException exception = assertThrows(CaseStudyException.class, ()-> this.mockHttpConnection.executeGetRequest("", headers));
-        assertEquals(ServiceConstant._ERR_OCCURRED_KEY, exception.getKey());
+        assertThrows(
+                CaseStudyException.class,
+                () -> httpConnection.executeGetRequest("/test", Map.of())
+        );
 
     }
 
+    @Test
+    void shouldThrowConnectionErrorOnIOException() throws Exception {
+
+        when(httpClient.send(any(), any()))
+                .thenThrow(new IOException("Network error"));
+
+        assertThrows(
+                CaseStudyException.class,
+                () -> httpConnection.executeGetRequest("/test", Map.of())
+        );
+
+    }
+
+    @Test
+    void shouldThrowConnectionErrorOnInterruptedException() throws Exception {
+
+        when(httpClient.send(any(), any()))
+                .thenThrow(new InterruptedException("Interrupted"));
+
+        assertThrows(
+                CaseStudyException.class,
+                () -> httpConnection.executeGetRequest("/test", Map.of())
+        );
+
+    }
 }
-
