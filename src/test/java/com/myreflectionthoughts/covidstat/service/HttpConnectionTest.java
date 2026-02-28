@@ -29,6 +29,7 @@ class HttpConnectionTest {
     @Test
     void shouldReturnBodyWhenStatus200() throws Exception {
 
+        Map<String, String> headers = Map.of();
         when(response.statusCode()).thenReturn(200);
         when(response.body()).thenReturn("SUCCESS");
 
@@ -37,7 +38,7 @@ class HttpConnectionTest {
                 ArgumentMatchers.any(HttpResponse.BodyHandler.class)
         )).thenReturn(response);
 
-        String result = httpConnection.executeGetRequest("/test", Map.of());
+        String result = httpConnection.executeGetRequest("/test", headers);
 
         assertEquals("SUCCESS", result);
     }
@@ -45,6 +46,7 @@ class HttpConnectionTest {
     @Test
     void shouldThrowBadRequestExceptionFor4xx() throws Exception {
 
+        Map<String, String> headers = Map.of();
         when(response.statusCode()).thenReturn(404);
         when(response.body()).thenReturn("NOT FOUND");
 
@@ -55,7 +57,7 @@ class HttpConnectionTest {
 
         assertThrows(
                 CaseStudyException.class,
-                () -> httpConnection.executeGetRequest("/test", Map.of())
+                () -> httpConnection.executeGetRequest("/test", headers)
         );
 
     }
@@ -63,6 +65,7 @@ class HttpConnectionTest {
     @Test
     void shouldThrowProcessingErrorFor5xx() throws Exception {
 
+        Map<String, String> headers = Map.of();
         when(response.statusCode()).thenReturn(500);
         when(response.body()).thenReturn("SERVER ERROR");
 
@@ -73,7 +76,7 @@ class HttpConnectionTest {
 
         assertThrows(
                 CaseStudyException.class,
-                () -> httpConnection.executeGetRequest("/test", Map.of())
+                () -> httpConnection.executeGetRequest("/test", headers)
         );
 
     }
@@ -81,6 +84,7 @@ class HttpConnectionTest {
     @Test
     void shouldThrowGenericErrorForNon200Non4xxNon5xx() throws Exception {
 
+        Map<String, String> headers = Map.of();
         HttpResponse<String> response = mock(HttpResponse.class);
         when(response.statusCode()).thenReturn(302);
         when(response.body()).thenReturn("REDIRECT");
@@ -92,7 +96,7 @@ class HttpConnectionTest {
 
         assertThrows(
                 CaseStudyException.class,
-                () -> httpConnection.executeGetRequest("/test", Map.of())
+                () -> httpConnection.executeGetRequest("/test", headers)
         );
 
     }
@@ -100,12 +104,14 @@ class HttpConnectionTest {
     @Test
     void shouldThrowConnectionErrorOnIOException() throws Exception {
 
+        Map<String, String> headers = Map.of();
+
         when(httpClient.send(any(), any()))
                 .thenThrow(new IOException("Network error"));
 
         assertThrows(
                 CaseStudyException.class,
-                () -> httpConnection.executeGetRequest("/test", Map.of())
+                () -> httpConnection.executeGetRequest("/test", headers)
         );
 
     }
@@ -113,12 +119,13 @@ class HttpConnectionTest {
     @Test
     void shouldThrowConnectionErrorOnInterruptedException() throws Exception {
 
+        Map<String, String> headers = Map.of();
         when(httpClient.send(any(), any()))
                 .thenThrow(new InterruptedException("Interrupted"));
 
         assertThrows(
                 CaseStudyException.class,
-                () -> httpConnection.executeGetRequest("/test", Map.of())
+                () -> httpConnection.executeGetRequest("/test", headers)
         );
 
     }
