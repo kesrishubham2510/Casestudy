@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  class MappingUtilityTest {
 
     static class TestDto {
-        private String name;
+        public String name;
          String getName() { return name; }
          void setName(String name) { this.name = name; }
     }
