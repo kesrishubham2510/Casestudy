@@ -11,7 +11,7 @@ cache:
   port: 6379
 
 api:
-  key: 3f5c6d0e-9f48-4d5c-ae78-2db63e2f8c41
+  key: ${API_KEY}
 
 supportedCountries:
   - Afghanistan
