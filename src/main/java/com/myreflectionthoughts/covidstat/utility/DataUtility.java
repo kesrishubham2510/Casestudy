@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class DataUtility {
 
@@ -37,5 +40,15 @@ public class DataUtility {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static long calculateTheDaysBack(String referencedDate){
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        LocalDate givenDate = LocalDate.parse(referencedDate, formatter);
+        LocalDate today = LocalDate.now();
+
+        return ChronoUnit.DAYS.between(givenDate, today);
     }
 }
