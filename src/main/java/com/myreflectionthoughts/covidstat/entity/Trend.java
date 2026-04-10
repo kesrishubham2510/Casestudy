@@ -8,4 +8,6 @@ public class Trend extends ResponseWrapper{
     private double changePercentage;
     private String direction;
     private String alertMessage;
+    private String country;
+    private String referencedDate;
 }

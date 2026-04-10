@@ -13,6 +13,6 @@ public class ServiceConstant {
     public static final String _ERR_BAD_REQUEST_KEY = "_ERR_BAD_REQUEST";
     public static final String API_VERSION = "v1";
     public static final String API_PREFIX = "/api/covid-stat/";
-
+    public static final int MAX_DAY_TREND = 14;
 
 }
