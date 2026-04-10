@@ -1,5 +1,5 @@
 package com.myreflectionthoughts.covidstat.contract;
 
-public interface Validator<T>{
+public interface IValidator<T>{
     boolean isValid(T t);
 }
