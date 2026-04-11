@@ -29,10 +29,6 @@ public class BeanConfiguration {
         return HttpClient.newHttpClient();
     }
 
-    @Bean(name = "httpConnection")
-    public HttpConnection httpConnection(){
-        return new HttpConnection(httpClient());
-    }
 
     @Bean(name = "badRequestExceptionHandler")
     public BadRequestExceptionHandler badRequestExceptionHandler(){
