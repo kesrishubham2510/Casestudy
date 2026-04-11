@@ -1,4 +1,4 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.service.impl.cacheservice;
 
 import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;

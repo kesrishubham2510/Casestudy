@@ -1,17 +1,14 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.service.impl.cacheservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
-import com.myreflectionthoughts.covidstat.entity.Trend;
 import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 @Component

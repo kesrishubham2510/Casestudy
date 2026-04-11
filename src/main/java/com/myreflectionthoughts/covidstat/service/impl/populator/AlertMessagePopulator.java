@@ -1,4 +1,4 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.service.impl.populator;
 
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
