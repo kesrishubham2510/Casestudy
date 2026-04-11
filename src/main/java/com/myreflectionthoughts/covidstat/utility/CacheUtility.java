@@ -3,7 +3,6 @@ package com.myreflectionthoughts.covidstat.utility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myreflectionthoughts.covidstat.contract.ICache;
 import com.myreflectionthoughts.covidstat.entity.Trends;
-import com.myreflectionthoughts.covidstat.service.RedisCacheService;
 import io.micrometer.common.util.StringUtils;
 
 import java.time.ZonedDateTime;

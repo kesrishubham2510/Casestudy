@@ -1,6 +1,5 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.service.impl.populator;
 
-import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.constant.ServiceConstant;
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
@@ -10,6 +9,7 @@ import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
+import com.myreflectionthoughts.covidstat.service.NDayAverage;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
