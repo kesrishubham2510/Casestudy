@@ -42,8 +42,6 @@ public class Orchestrator {
 
     public List<CovidStatResponse> fetchComparisionStats(Country[] countries, LocalDate referenceDate){
         List<CovidStatResponse> statResponses = new ArrayList<>();
-        CovidStatResponse response = null;
-        int nonEmptyCountryStrings = 0;
 
         List<Country> countryList = Arrays.asList(countries).stream().filter(country -> countryValidator.isValid(country))
                 .collect(Collectors.toList());

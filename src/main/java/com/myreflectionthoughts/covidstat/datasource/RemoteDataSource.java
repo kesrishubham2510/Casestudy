@@ -13,6 +13,7 @@ import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,10 +43,9 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     @Override
     public ExternalAPIResponse getLatestStats(String country, long referencedDate) {
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
-        url = prepareURL(url, country, "", "", "false", "true");
+        url = prepareURLForLatestStat(url, country, "", "", "false", "true");
         String response = remoteConnection.executeGetRequest(url, defaultHeaders);
         ExternalAPIResponse externalAPIResponse = null;
-
 
         try {
             externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
@@ -61,7 +61,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     @Override
     public ExternalAPIResponse getVaccineCoverage(String country, long referencedDate) {
         String url = this.urlTemplateRegistry.getURL(USECASE.VACCINE_COVERAGE);
-        url = prepareURL(url, country, String.valueOf(referencedDate),  "true");
+        url = prepareURLForVaccineCoverage(url, country, String.valueOf(referencedDate),  "true");
         String response = remoteConnection.executeGetRequest(url, defaultHeaders);
         ExternalAPIResponse externalAPIResponse = null;
 
@@ -117,68 +117,63 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
 
         // last day
-        return prepareURL(url, country, "true", "", "false", "true");
+        return prepareURLForLatestStat(url, country, "true", "", "false", "true");
     }
 
     private String prepareURLForPreviousToPreviousDay(String country){
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
 
         // lastTwoDays
-        return prepareURL(url, country, "", "true", "false", "true");
+        return prepareURLForLatestStat(url, country, "", "true", "false", "true");
     }
 
+    private String prepareURLForLatestStat(String baseURL, String country, String yesterday, String twoDaysAgo, String allowNull, String strict){
+
+        UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(baseURL);
 
 
-    private String prepareURL(String url, String country, String yesterday, String twoDaysAgo, String allowNull, String strict){
-
-        url = url.replace("{country}", country);
-
-        if(country.contains(" ")){
-            url = url.replace(" ", "%20");
+        if(StringUtils.isNotBlank(country)){
+            uri = uri.pathSegment(country);
         }
 
-        if(StringUtils.isBlank(yesterday)){
-            url = url.replace("yesterday={yesterday}&", "");
-        }else{
-            url = url.replace("{yesterday}", yesterday);
+        if(StringUtils.isNotBlank(yesterday)){
+            uri = uri.queryParam("yesterday", yesterday);
         }
 
-        if(StringUtils.isBlank(twoDaysAgo)){
-            url = url.replace("twoDaysAgo={twoDaysAgo}&", "");
-        }else{
-            url = url.replace("{twoDaysAgo}", twoDaysAgo);
+        if(StringUtils.isNotBlank(twoDaysAgo)){
+            uri = uri.queryParam("twoDaysAgo", twoDaysAgo);
         }
 
-        url = url.replace("{strict}", strict);
-        url = url.replace("{allowNull}", allowNull);
+        if(StringUtils.isNotBlank(strict)){
+            uri = uri.queryParam("strict", strict);
+        }
 
-        return url;
+        if(StringUtils.isNotBlank(allowNull)){
+            uri = uri.queryParam("allowNull", allowNull);
+        }
+
+        return uri.build().encode().toUriString();
     }
 
-    private String prepareURL(String url, String country, String lastDays, String fullData){
+    private String prepareURLForVaccineCoverage(String url, String country, String lastDays, String fullData){
 
-        if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase("global")){
-            url = url.replace("countries/{country}", "");
-        }else {
-            url = url.replace("{country}", country);
-        }
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromPath(url);
 
-        if(country.contains(" ")){
-            url = url.replace(" ", "%20");
+        if(StringUtils.isNotBlank(country) && !country.equalsIgnoreCase("global")){
+            uriComponents = uriComponents.path("/countries").pathSegment(country);
         }
 
         // by default API returns latest of last 30 days data it has
-        if(StringUtils.isBlank(lastDays) || lastDays.equalsIgnoreCase("0")){
-            url = url.replace("lastdays={lastdays}&", "");
-        }else {
-            url = url.replace("{lastdays}", lastDays);
+        if(StringUtils.isNotBlank(lastDays)){
+            uriComponents = uriComponents.queryParam("lastdays", lastDays);
         }
 
-        if(StringUtils.isBlank(fullData)){
-          fullData = "false";
+        if(StringUtils.isNotBlank(fullData)){
+            uriComponents = uriComponents.queryParam("fullData", fullData);
+        }else{
+            uriComponents = uriComponents.queryParam("lastdays", "false");
         }
 
-        url = url.replace("{fullData}", fullData);
-        return url;
+        return uriComponents.build().encode().toUriString();
     }
 }

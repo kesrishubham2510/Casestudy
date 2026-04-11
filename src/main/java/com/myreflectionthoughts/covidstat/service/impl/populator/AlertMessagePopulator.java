@@ -7,6 +7,7 @@ import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class AlertMessagePopulator implements IResponsePopulator<String, String>
         String alertMessageKey = CacheUtility.getKeyForAlertMessage(country, referencedDate);
         String alertMessage = redisAlertMessagePopulatorService.get(alertMessageKey);
 
-        if (Objects.isNull(alertMessage)) {
+        if (StringUtils.isBlank(alertMessage)) {
 
             logger.info("Pre-computed alert message not found:- "+country+", referencedDate:- "+referencedDate);
 
@@ -53,10 +54,12 @@ public class AlertMessagePopulator implements IResponsePopulator<String, String>
             lastTwoDaysResponse.getLastTwoDaysResponse().add(externalAPIResponse);
             alertMessage = evaluateAlertMessage(lastTwoDaysResponse);
 
-            redisAlertMessagePopulatorService.put(alertMessageKey+"_"+alertMessage);
+            if(StringUtils.isNotBlank(alertMessage)) {
+                redisAlertMessagePopulatorService.put(alertMessageKey + "|" + alertMessage);
+            }
         }
 
-        return alertMessageKey;
+        return alertMessage;
     }
 
     private String evaluateAlertMessage(LastTwoDaysResponse lastTwoDaysResponse){

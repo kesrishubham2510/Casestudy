@@ -23,7 +23,7 @@ public class RedisAlertMessageCacheService implements ICacheFacade<String, Strin
 
     @Override
     public void put(String message) {
-        String[] tokens = message.split("_");
+        String[] tokens = message.split("\\|");
         redisCacheService.put(tokens[0], tokens[1], CacheUtility.calculateTTLTimestamp(cacheTTLConfig.getAlertMessage()));
     }
 
