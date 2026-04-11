@@ -4,6 +4,7 @@ import com.myreflectionthoughts.covidstat.config.CacheTTLConfig;
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Logger;
 

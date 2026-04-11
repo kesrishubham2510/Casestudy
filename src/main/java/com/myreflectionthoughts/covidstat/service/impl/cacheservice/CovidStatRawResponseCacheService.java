@@ -6,7 +6,10 @@ import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
+import io.micrometer.common.util.StringUtils;
+import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class CovidStatRawResponseCacheService implements ICacheFacade<String, ExternalAPIResponse> {
@@ -14,7 +17,7 @@ public class CovidStatRawResponseCacheService implements ICacheFacade<String, Ex
     private final CacheTTLConfig cacheTTLConfig;
     private final RedisCacheService redisCacheService;
     private final MappingUtility mappingUtility;
-    private static final Logger logger = Logger.getLogger(CacheUtility.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(CovidStatRawResponseCacheService.class.getSimpleName());
 
 
     public CovidStatRawResponseCacheService(CacheTTLConfig cacheTTLConfig, RedisCacheService redisCacheService) {
@@ -39,7 +42,12 @@ public class CovidStatRawResponseCacheService implements ICacheFacade<String, Ex
 
         logger.info("Cache | Key:- "+key+" retrieved successfully from redis server");
         try {
-            return mappingUtility.parseToPOJO(cachedResponse, ExternalAPIResponse.class);
+            if(StringUtils.isNotBlank(cachedResponse)) {
+                return mappingUtility.parseToPOJO(cachedResponse, ExternalAPIResponse.class);
+            }else{
+                logger.severe("No value present in the cache | key:- "+key);
+                return null;
+            }
         } catch (JsonProcessingException e) {
             logger.severe("Exception occured while parsing cached response:- {}"+key);
             return null;

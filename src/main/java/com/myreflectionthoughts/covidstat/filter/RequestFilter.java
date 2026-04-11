@@ -1,7 +1,6 @@
 package com.myreflectionthoughts.covidstat.filter;
 
 import com.myreflectionthoughts.covidstat.config.APIKeyConfig;
-import com.myreflectionthoughts.covidstat.config.CountryConfig;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,11 +15,9 @@ import java.io.IOException;
 @Component
 public class RequestFilter extends OncePerRequestFilter {
     private String apiKey;
-    private final CountryConfig countryConfig;
 
-    public RequestFilter(CountryConfig countryConfig, APIKeyConfig apiKeyConfig){
+    public RequestFilter(APIKeyConfig apiKeyConfig){
         super();
-        this.countryConfig = countryConfig;
         this.apiKey = apiKeyConfig.getKey();
     }
 

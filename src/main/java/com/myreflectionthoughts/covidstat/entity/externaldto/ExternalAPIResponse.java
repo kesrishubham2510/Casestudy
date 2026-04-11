@@ -33,6 +33,7 @@ public class ExternalAPIResponse extends ResponseWrapper{
     private double activePerOneMillion;
     private double recoveredPerOneMillion;
     private double criticalPerOneMillion;
+    private String referencedDateFromUser;
     List<CoverageStatTimeline> timeline;
 
     @Data

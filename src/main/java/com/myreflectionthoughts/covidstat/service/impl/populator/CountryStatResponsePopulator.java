@@ -7,31 +7,36 @@ import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
-import com.myreflectionthoughts.covidstat.utility.MappingUtility;
+import io.micrometer.common.util.StringUtils;
+import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+@Component
 public class CountryStatResponsePopulator implements IResponsePopulator<String, CovidStatResponse> {
 
     private final ICacheFacade<String, ExternalAPIResponse> redisCacheExternalAPIResponseService;
-    private final MappingUtility mappingUtility;
     private final IDataSource<ResponseWrapper> remoteDataSource;
 
-    private static final Logger logger = Logger.getLogger(CountryStatResponsePopulator.class.getSimpleName());;
+    private static final Logger logger = Logger.getLogger(CountryStatResponsePopulator.class.getSimpleName());
 
     public CountryStatResponsePopulator( ICacheFacade<String, ExternalAPIResponse> redisCacheExternalAPIResponseService,
                                          IDataSource<ResponseWrapper> remoteDataSource
                                          ){
         this.redisCacheExternalAPIResponseService = redisCacheExternalAPIResponseService;
         this.remoteDataSource = remoteDataSource;
-        this.mappingUtility = MappingUtility.getMappingUtilityInstance();
     }
 
     @Override
     public CovidStatResponse populate(String country, String referencedDate) {
         CovidStatResponse covidStatResponse = new CovidStatResponse();
-        long daysBack = Long.parseLong(referencedDate);
+
+        if(StringUtils.isBlank(referencedDate)){
+            referencedDate = "02-02-2021";
+        }
 
         String cacheKeyForLatestStat = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
 

@@ -2,6 +2,7 @@ package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.config.CacheConfig;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import com.myreflectionthoughts.covidstat.service.impl.cacheservice.RedisCacheService;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import redis.clients.jedis.Jedis;

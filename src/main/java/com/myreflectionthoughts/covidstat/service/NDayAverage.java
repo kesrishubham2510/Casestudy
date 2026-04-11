@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.service;
 
+import com.myreflectionthoughts.covidstat.constant.Country;
 import com.myreflectionthoughts.covidstat.contract.ITrendEvaluation;
 import com.myreflectionthoughts.covidstat.entity.Trend;
 import com.myreflectionthoughts.covidstat.entity.Trends;
@@ -28,16 +29,18 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
         Trends trends = new Trends();
 
         for(; nDay < days.length; nDay++){
-            trends.getTrends().add(calculateTrend(data.getTimeline().subList(0, days[nDay])));
+            trends.getTrends().add(calculateTrend(data.getTimeline().subList(0, days[nDay]), data.getCountry(), data.getReferencedDateFromUser()));
         }
 
         return trends;
     }
 
-    private Trend calculateTrend(List<CoverageStatTimeline> stats){
+    private Trend calculateTrend(List<CoverageStatTimeline> stats, String country, String referencedDate){
 
         logger.info("Starting calculation for "+stats.size()+" days stats...");
         Trend trend = new Trend();
+        trend.setCountry(country);
+        trend.setReferencedDate(referencedDate);
 
         int itr, size;
         long startingValue, lastValue;

@@ -3,25 +3,24 @@ package com.myreflectionthoughts.covidstat.service.impl.populator;
 import com.myreflectionthoughts.covidstat.contract.ICacheFacade;
 import com.myreflectionthoughts.covidstat.contract.IDataSource;
 import com.myreflectionthoughts.covidstat.contract.IResponsePopulator;
-import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
-import com.myreflectionthoughts.covidstat.utility.MappingUtility;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+@Component
 public class AlertMessagePopulator implements IResponsePopulator<String, String> {
 
     private final ICacheFacade<String, String> redisAlertMessagePopulatorService;
     private final ICacheFacade<String, ExternalAPIResponse> redisCacheExternalAPIResponseService;
-    private final MappingUtility mappingUtility;
     private final IDataSource<ResponseWrapper> remoteDataSource;
 
-    private static final Logger logger = Logger.getLogger(AlertMessagePopulator.class.getSimpleName());;
+    private static final Logger logger = Logger.getLogger(AlertMessagePopulator.class.getSimpleName());
 
     public AlertMessagePopulator( ICacheFacade<String, String> redisAlertMessagePopulatorService,
                                   ICacheFacade<String, ExternalAPIResponse> redisCacheExternalAPIResponseService,
@@ -29,13 +28,11 @@ public class AlertMessagePopulator implements IResponsePopulator<String, String>
         this.redisAlertMessagePopulatorService = redisAlertMessagePopulatorService;
         this.redisCacheExternalAPIResponseService = redisCacheExternalAPIResponseService;
         this.remoteDataSource = remoteDataSource;
-        this.mappingUtility = MappingUtility.getMappingUtilityInstance();
     }
 
     @Override
     public String populate(String country, String referencedDate) {
 
-        CovidStatResponse covidStatResponse = new CovidStatResponse();
         String alertMessageKey = CacheUtility.getKeyForAlertMessage(country, referencedDate);
         String alertMessage = redisAlertMessagePopulatorService.get(alertMessageKey);
 
@@ -48,7 +45,7 @@ public class AlertMessagePopulator implements IResponsePopulator<String, String>
             String cacheKeyForExternalAPIResponse = CacheUtility.getKeyForRawAPIResponseForCurrentStat(country);
             ExternalAPIResponse externalAPIResponse = redisCacheExternalAPIResponseService.get(cacheKeyForExternalAPIResponse);
 
-            if(Objects.isNull(cacheKeyForExternalAPIResponse)){
+            if(Objects.isNull(externalAPIResponse)){
                 externalAPIResponse = (ExternalAPIResponse) remoteDataSource.getLatestStats(country, 0L);
                 externalAPIResponse.setCountry(country);
             }

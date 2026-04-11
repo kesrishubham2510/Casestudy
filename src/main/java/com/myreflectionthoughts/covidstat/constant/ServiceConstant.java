@@ -1,5 +1,7 @@
 package com.myreflectionthoughts.covidstat.constant;
 
+import java.time.format.DateTimeFormatter;
+
 public class ServiceConstant {
 
     private ServiceConstant(){}
@@ -14,5 +16,4 @@ public class ServiceConstant {
     public static final String API_VERSION = "v1";
     public static final String API_PREFIX = "/api/covid-stat/";
     public static final int MAX_DAY_TREND = 14;
-
 }

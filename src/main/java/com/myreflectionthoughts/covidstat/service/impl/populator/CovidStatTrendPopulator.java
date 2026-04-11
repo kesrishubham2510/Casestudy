@@ -12,7 +12,6 @@ import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse
 import com.myreflectionthoughts.covidstat.service.NDayAverage;
 import com.myreflectionthoughts.covidstat.utility.CacheUtility;
 import com.myreflectionthoughts.covidstat.utility.DataUtility;
-import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -25,17 +24,15 @@ public class CovidStatTrendPopulator implements IResponsePopulator<String, Covid
     private final ICacheFacade<String, HashMap<String, Trends>> redisCacheTrendService;
     private final ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> trendEvaluation;
 
-    private final MappingUtility mappingUtility;
     private final IDataSource<ResponseWrapper> remoteDataSource;
 
 
-    private static final Logger logger = Logger.getLogger(CovidStatTrendPopulator.class.getSimpleName());;
+    private static final Logger logger = Logger.getLogger(CovidStatTrendPopulator.class.getSimpleName());
 
     public CovidStatTrendPopulator( ICacheFacade<String, HashMap<String, Trends>> redisCacheTrendService,
                                          IDataSource<ResponseWrapper> remoteDataSource){
         this.redisCacheTrendService = redisCacheTrendService;
         this.remoteDataSource = remoteDataSource;
-        this.mappingUtility = MappingUtility.getMappingUtilityInstance();
         this.trendEvaluation = NDayAverage.getNDayAverageInstance();
     }
 
@@ -52,15 +49,15 @@ public class CovidStatTrendPopulator implements IResponsePopulator<String, Covid
 
         if (Objects.isNull(responseForGlobalVaccineCoverageTrends) || Objects.isNull(responseForCountryVaccineCoverageTrends)) {
 
-            ExternalAPIResponse countryVaccinationCoverage = null;
-            ExternalAPIResponse globalVaccinationCoverage = null;
-
             // get the vaccine coverage for country
-            countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, DataUtility.calculateTheDaysBack(referencedDate) + ServiceConstant.MAX_DAY_TREND);
+            ExternalAPIResponse countryVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage(country, DataUtility.calculateTheDaysBack(referencedDate) + ServiceConstant.MAX_DAY_TREND);
+            countryVaccinationCoverage.setReferencedDateFromUser(referencedDate);
             responseWithVaccineCoverage.setDosesAdministeredInCountry(countryVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
 
             // get the vaccine coverage for global level
-            globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage("global", DataUtility.calculateTheDaysBack(referencedDate) + ServiceConstant.MAX_DAY_TREND);
+            ExternalAPIResponse globalVaccinationCoverage = (ExternalAPIResponse) remoteDataSource.getVaccineCoverage("global", DataUtility.calculateTheDaysBack(referencedDate) + ServiceConstant.MAX_DAY_TREND);
+            globalVaccinationCoverage.setCountry("global");
+            globalVaccinationCoverage.setReferencedDateFromUser(referencedDate);
             responseWithVaccineCoverage.setDosesAdministeredGlobally(globalVaccinationCoverage.getTimeline().get(countryVaccinationCoverage.getTimeline().size()-1).getTotal());
 
 

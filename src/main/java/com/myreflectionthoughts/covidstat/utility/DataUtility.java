@@ -44,7 +44,7 @@ public class DataUtility {
 
     public static long calculateTheDaysBack(String referencedDate){
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         LocalDate givenDate = LocalDate.parse(referencedDate, formatter);
         LocalDate today = LocalDate.now();

@@ -1,13 +1,11 @@
 package com.myreflectionthoughts.covidstat.filter;
 
 import com.myreflectionthoughts.covidstat.config.APIKeyConfig;
-import com.myreflectionthoughts.covidstat.config.CountryConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,12 +22,11 @@ class RequestFilterTest {
 
     @BeforeEach
     void setUp() {
-        CountryConfig countryConfig = mock(CountryConfig.class);
         APIKeyConfig apiKeyConfig = mock(APIKeyConfig.class);
 
         when(apiKeyConfig.getKey()).thenReturn("valid-key");
 
-        requestFilter = new RequestFilter(countryConfig, apiKeyConfig);
+        requestFilter = new RequestFilter(apiKeyConfig);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
