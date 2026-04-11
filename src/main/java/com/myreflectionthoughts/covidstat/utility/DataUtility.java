@@ -2,6 +2,7 @@ package com.myreflectionthoughts.covidstat.utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,5 +51,9 @@ public class DataUtility {
         LocalDate today = LocalDate.now();
 
         return ChronoUnit.DAYS.between(givenDate, today);
+    }
+
+    public static String getDefaultResponse(String path){
+        return getFileContent("/data/StaticCovidStateResponse.json");
     }
 }
