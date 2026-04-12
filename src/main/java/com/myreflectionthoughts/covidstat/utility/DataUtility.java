@@ -53,7 +53,8 @@ public class DataUtility {
         return ChronoUnit.DAYS.between(givenDate, today);
     }
 
-    public static String getDefaultResponse(String path){
-        return getFileContent("/data/StaticCovidStateResponse.json");
+    public static <T> T getDefaultResponse(String path, Class<T> t){
+        String content = getFileContent("/data/StaticCovidStateResponse.json");
+        return convertTOPOJO(content, t);
     }
 }
