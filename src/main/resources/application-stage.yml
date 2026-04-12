@@ -12,3 +12,9 @@ cache:
 
 api:
   key: ${API_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: circuitbreakers
