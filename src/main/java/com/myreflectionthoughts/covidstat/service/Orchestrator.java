@@ -1,14 +1,20 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.constant.Country;
-import com.myreflectionthoughts.covidstat.contract.*;
+import com.myreflectionthoughts.covidstat.contract.IResponsePopulator;
+import com.myreflectionthoughts.covidstat.contract.IValidator;
 import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
 import com.myreflectionthoughts.covidstat.exception.CountryNotFoundException;
+import com.myreflectionthoughts.covidstat.exception.FallbackException;
+import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -24,14 +30,14 @@ public class Orchestrator {
     private final Logger logger;
 
     public Orchestrator(
-                        @Qualifier(value = "currentStatPopulator")
-                        IResponsePopulator<String, CovidStatResponse> currentStatsPopulator,
-                        @Qualifier(value = "vaccinationTrendsPopulator")
-                        IResponsePopulator<String, CovidStatResponse> vaccinationTrendsPopulator,
-                        @Qualifier(value = "alertMessagePopulator")
-                        IResponsePopulator<String, String> alertMessagePopulator,
-                        IValidator<Country> countryValidator
-                        ){
+            @Qualifier(value = "currentStatPopulator")
+            IResponsePopulator<String, CovidStatResponse> currentStatsPopulator,
+            @Qualifier(value = "vaccinationTrendsPopulator")
+            IResponsePopulator<String, CovidStatResponse> vaccinationTrendsPopulator,
+            @Qualifier(value = "alertMessagePopulator")
+            IResponsePopulator<String, String> alertMessagePopulator,
+            IValidator<Country> countryValidator
+    ) {
 
         this.currentStatsPopulator = currentStatsPopulator;
         this.countryValidator = countryValidator;
@@ -40,17 +46,18 @@ public class Orchestrator {
         this.logger = Logger.getLogger(Orchestrator.class.getSimpleName());
     }
 
-    public List<CovidStatResponse> fetchComparisionStats(Country[] countries, LocalDate referenceDate){
+    public List<CovidStatResponse> fetchComparisionStats(Country[] countries, LocalDate referenceDate) {
         List<CovidStatResponse> statResponses = new ArrayList<>();
 
-        List<Country> countryList = Arrays.asList(countries).stream().filter(country -> countryValidator.isValid(country))
-                .collect(Collectors.toList());
+        // to filter out unique vlaid countries
+        Set<Country> countrySet = Arrays.asList(countries).stream().filter(country -> countryValidator.isValid(country))
+                .collect(Collectors.toSet());
 
-        if(countryList.size()<2){
+        if (countrySet.size() < 2) {
             throw new CountryNotFoundException("Need atleast two countries to compare");
         }
 
-        statResponses = countryList.stream().map(country -> {
+        statResponses = countrySet.stream().map(country -> {
             return fetchStats(country, referenceDate);
         }).collect(Collectors.toList());
 
@@ -58,14 +65,20 @@ public class Orchestrator {
     }
 
     // TODO: Make it handle error and graceful degradation
-    public CovidStatResponse fetchStats(Country country, LocalDate referencedDate){
+    public CovidStatResponse fetchStats(Country country, LocalDate referencedDate) {
 
         String countryName = country.getDisplayName();
-        CovidStatResponse covidStatResponse = currentStatsPopulator.populate(countryName, referencedDate.toString());
-        covidStatResponse.setTrends(vaccinationTrendsPopulator.populate(countryName, referencedDate.toString()).getTrends());
-        covidStatResponse.setAlertMessage(alertMessagePopulator.populate(countryName, referencedDate.toString()));
 
-        return covidStatResponse;
+        try {
+            CovidStatResponse covidStatResponse = currentStatsPopulator.populate(countryName, referencedDate.toString());
+            covidStatResponse.setTrends(vaccinationTrendsPopulator.populate(countryName, referencedDate.toString()).getTrends());
+            covidStatResponse.setAlertMessage(alertMessagePopulator.populate(countryName, referencedDate.toString()));
+
+            return covidStatResponse;
+        } catch (FallbackException fallbackException) {
+            logger.severe("Returning Static response, because of Fallback exception");
+            return DataUtility.getDefaultResponse("/data/StaticCovidResponse.json", CovidStatResponse.class);
+        }
     }
 
 }
