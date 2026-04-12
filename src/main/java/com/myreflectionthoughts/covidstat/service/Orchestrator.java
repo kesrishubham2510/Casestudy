@@ -77,7 +77,7 @@ public class Orchestrator {
             return covidStatResponse;
         } catch (FallbackException fallbackException) {
             logger.severe("Returning Static response, because of Fallback exception");
-            return DataUtility.getDefaultResponse("/data/StaticCovidResponse.json", CovidStatResponse.class);
+            return DataUtility.getDefaultResponse("data/StaticCovidStatResponse.json", CovidStatResponse.class);
         }
     }
 
