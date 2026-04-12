@@ -141,7 +141,7 @@ class RemoteDataSourceTest {
     public void testStaticCountryStats_Success() {
 
         ExternalAPIResponse response =
-                remoteDataSource.staticCountryStats(Country.AFGHANISTAN.getDisplayName(), 0);
+                remoteDataSource.staticCountryStats(Country.AFGHANISTAN.getDisplayName(), 0, new Throwable());
 
         assertNotNull(response);
         assertTrue(response.isServedFromCache());
@@ -152,14 +152,14 @@ class RemoteDataSourceTest {
     public void testStaticCountryStats_ThrowsFallbackException() {
 
         assertThrows(FallbackException.class,
-                     () -> remoteDataSource.staticCountryStats(Country.INDIA.getDisplayName(), 0));
+                     () -> remoteDataSource.staticCountryStats(Country.INDIA.getDisplayName(), 0, new Throwable()));
     }
 
     @Test
     public void testStaticVaccineCoverageStats_Success() {
 
         ExternalAPIResponse response =
-                remoteDataSource.staticVaccineCoverageStats(Country.AFGHANISTAN.getDisplayName(), 0);
+                remoteDataSource.staticVaccineCoverageStats(Country.AFGHANISTAN.getDisplayName(), 0, new Throwable());
 
         assertNotNull(response);
         assertTrue(response.isServedFromCache());
@@ -170,14 +170,14 @@ class RemoteDataSourceTest {
     public void testStaticVaccineCoverageStats_ThrowsFallbackException() {
 
         assertThrows(FallbackException.class,
-                     () -> remoteDataSource.staticVaccineCoverageStats(Country.IRELAND.getDisplayName(), 0));
+                     () -> remoteDataSource.staticVaccineCoverageStats(Country.IRELAND.getDisplayName(), 0, new Throwable()));
     }
 
     @Test
     public void testStaticLastTwoDayStats_Success() {
 
         LastTwoDaysResponse response =
-                remoteDataSource.staticLastTwoDayStats(Country.AFGHANISTAN.getDisplayName(), 0);
+                remoteDataSource.staticLastTwoDayStats(Country.AFGHANISTAN.getDisplayName(), 0, new Throwable());
 
         assertNotNull(response);
         assertEquals(2, response.getLastTwoDaysResponse().size());
@@ -190,7 +190,7 @@ class RemoteDataSourceTest {
     public void testStaticLastTwoDayStats_ThrowsFallbackException() {
 
         assertThrows(FallbackException.class,
-                     () -> remoteDataSource.staticLastTwoDayStats(Country.DRC.getDisplayName(), 0));
+                     () -> remoteDataSource.staticLastTwoDayStats(Country.DRC.getDisplayName(), 0, new Throwable()));
     }
 
 }

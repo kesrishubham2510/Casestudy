@@ -190,7 +190,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     /*
       Scenario:- If 1st call fails and any further call succeeds, it can cause wrong data sent to the customer
      */
-    public ExternalAPIResponse staticCountryStats(String country, long referencedDate){
+
+    public ExternalAPIResponse staticCountryStats(String country, long referencedDate, Throwable t){
         ExternalAPIResponse externalAPIResponse =  DataUtility.getDefaultResponse("data/StaticLatestCountryStat.json", ExternalAPIResponse.class);
 
         if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase(externalAPIResponse.getCountry())){
@@ -201,7 +202,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         throw new FallbackException();
     }
 
-    public ExternalAPIResponse staticVaccineCoverageStats(String country, long referencedDate){
+    public ExternalAPIResponse staticVaccineCoverageStats(String country, long referencedDate, Throwable t){
         ExternalAPIResponse externalAPIResponse =  DataUtility.getDefaultResponse("data/StaticVaccineCoverageStats.json", ExternalAPIResponse.class);
 
 
@@ -213,7 +214,7 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         throw new FallbackException();
     }
 
-    public LastTwoDaysResponse staticLastTwoDayStats(String country, long referencedDate){
+    public LastTwoDaysResponse staticLastTwoDayStats(String country, long referencedDate, Throwable t){
         LastTwoDaysResponse lastTwoDaysResponse =  DataUtility.getDefaultResponse("data/StaticTwoDayStats.json", LastTwoDaysResponse.class);
 
         if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase(lastTwoDaysResponse.getLastTwoDaysResponse().get(0).getCountry())){
