@@ -48,13 +48,7 @@ public class WebClientConnection implements IRemoteConnection<String> {
                             handleError(response, ServiceConstant._ERR_REQUEST_PROCESSING_ERROR_KEY))
                     .bodyToMono(String.class)
                     .timeout(Duration.ofMillis(2000))
-                    .retryWhen(
-                            Retry.backoff(3, Duration.ofSeconds(1))
-                                    .filter(this::isRetryable)
-                                    .doBeforeRetry(retrySignal -> {
-                                        logger.info("URL:- "+url+" | Retrying :- "+retrySignal.totalRetries()+" | statusCode:- "+", reason:- "+retrySignal.failure().getMessage());
-                                    })
-                    ).block();
+                    .block();
 
             logger.info("Request to 3rd party completed successfully");
             return result;
@@ -84,13 +78,5 @@ public class WebClientConnection implements IRemoteConnection<String> {
                             body
                     );
                 });
-    }
-
-    private boolean isRetryable(Throwable throwable) {
-        if (throwable instanceof CaseStudyException ex) {
-            logger.severe("Exception occured:- "+ex.getStatusCode()+", message:- "+ex.getMessage());
-            return ex.getStatusCode() >= 500;
-        }
-        return true;
     }
 }
