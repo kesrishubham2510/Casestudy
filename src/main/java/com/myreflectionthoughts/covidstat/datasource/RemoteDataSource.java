@@ -9,8 +9,12 @@ import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse
 import com.myreflectionthoughts.covidstat.entity.externaldto.LastTwoDaysResponse;
 import com.myreflectionthoughts.covidstat.enums.USECASE;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import com.myreflectionthoughts.covidstat.exception.FallbackException;
 import com.myreflectionthoughts.covidstat.registry.URLTemplateRegistry;
+import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import com.myreflectionthoughts.covidstat.utility.MappingUtility;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,6 +45,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     }
 
     @Override
+    @Retry(name = "latestCountryStats")
+    @CircuitBreaker(name="latestCountryStats", fallbackMethod = "staticCountryStats")
     public ExternalAPIResponse getLatestStats(String country, long referencedDate) {
         String url = this.urlTemplateRegistry.getURL(USECASE.LATEST_STAT);
         url = prepareURLForLatestStat(url, country, "", "", "false", "true");
@@ -59,6 +65,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     }
 
     @Override
+    @Retry(name = "vaccineCoverageStats")
+    @CircuitBreaker(name="vaccineCoverageStats", fallbackMethod = "staticVaccineCoverageStats")
     public ExternalAPIResponse getVaccineCoverage(String country, long referencedDate) {
         String url = this.urlTemplateRegistry.getURL(USECASE.VACCINE_COVERAGE);
         url = prepareURLForVaccineCoverage(url, country, String.valueOf(referencedDate),  "true");
@@ -84,6 +92,8 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     }
 
     @Override
+    @Retry(name = "lastTwoDayStats")
+    @CircuitBreaker(name="lastTwoDayStats", fallbackMethod = "staticLastTwoDayStats")
     public LastTwoDaysResponse getDataForAlerts(String country, long referencedDate) {
 
         String url = null;
@@ -175,5 +185,45 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         }
 
         return uriComponents.build().encode().toUriString();
+    }
+
+    /*
+      Scenario:- If 1st call fails and any further call succeeds, it can cause wrong data sent to the customer
+     */
+    public ExternalAPIResponse staticCountryStats(String country, long referencedDate){
+        ExternalAPIResponse externalAPIResponse =  DataUtility.getDefaultResponse("data/StaticLatestCountryStat.json", ExternalAPIResponse.class);
+
+        if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase(externalAPIResponse.getCountry())){
+            externalAPIResponse.setServedFromCache(true);
+            return externalAPIResponse;
+        }
+
+        throw new FallbackException();
+    }
+
+    public ExternalAPIResponse staticVaccineCoverageStats(String country, long referencedDate){
+        ExternalAPIResponse externalAPIResponse =  DataUtility.getDefaultResponse("data/StaticVaccineCoverageStats.json", ExternalAPIResponse.class);
+
+
+        if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase(externalAPIResponse.getCountry())){
+            externalAPIResponse.setServedFromCache(true);
+            return externalAPIResponse;
+        }
+
+        throw new FallbackException();
+    }
+
+    public LastTwoDaysResponse staticLastTwoDayStats(String country, long referencedDate){
+        LastTwoDaysResponse lastTwoDaysResponse =  DataUtility.getDefaultResponse("data/StaticTwoDayStats.json", LastTwoDaysResponse.class);
+
+        if(StringUtils.isNotBlank(country) && country.equalsIgnoreCase(lastTwoDaysResponse.getLastTwoDaysResponse().get(0).getCountry())){
+            lastTwoDaysResponse.getLastTwoDaysResponse().forEach(externalAPIResponse -> {
+                externalAPIResponse.setServedFromCache(true);
+            });
+            return lastTwoDaysResponse;
+        }
+
+        throw new FallbackException();
+
     }
 }
