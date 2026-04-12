@@ -34,7 +34,8 @@ public class ExternalAPIResponse extends ResponseWrapper{
     private double recoveredPerOneMillion;
     private double criticalPerOneMillion;
     private String referencedDateFromUser;
-    List<CoverageStatTimeline> timeline;
+    private List<CoverageStatTimeline> timeline;
+    private boolean servedFromCache;
 
     @Data
     static class CountryInfo{
