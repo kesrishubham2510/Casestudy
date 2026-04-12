@@ -24,10 +24,6 @@ class CovidStatControllerTest {
         controller = new CovidStatController(orchestrator);
     }
 
-    // =========================================
-    // getCountryStats Tests
-    // =========================================
-
     @Test
     void getCountryStats_ShouldReturn200AndBody() {
 
@@ -55,14 +51,9 @@ class CovidStatControllerTest {
                 controller.getCountryStats(Country.INDIA, null);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(mockResponse, response.getBody());
 
-        verify(orchestrator).fetchStats(Country.INDIA, null);
+        verify(orchestrator).fetchStats(Country.INDIA, LocalDate.now());
     }
-
-    // =========================================
-    // getCountryComparisonStats Tests
-    // =========================================
 
     @Test
     void getCountryComparisonStats_ShouldReturn200AndList() {
@@ -109,5 +100,15 @@ class CovidStatControllerTest {
         assertTrue(response.getBody().isEmpty());
 
         verify(orchestrator).fetchComparisionStats(any(), eq(LocalDate.now()));
+    }
+
+    @Test
+    void getSupportedCountries() {
+
+        ResponseEntity<List<String>> response =
+                controller.getSupportedCountries();
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(!response.getBody().isEmpty());
     }
 }

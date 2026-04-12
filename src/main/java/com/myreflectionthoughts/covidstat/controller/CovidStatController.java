@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.WeekFields.ISO;
 
@@ -57,6 +59,14 @@ public class CovidStatController {
 
         return ResponseEntity.status(HttpStatus.OK).body(orchestrator.fetchComparisionStats(countries, effectiveDate));
     }
+
+    @ApiResponse(responseCode = "200", description = "List of all supported countries")
+    @GetMapping(ServiceConstant.API_VERSION + "/countries/supportedCountries")
+    public ResponseEntity<List<String>> getSupportedCountries(){
+        return  ResponseEntity.status(HttpStatus.OK).body(Arrays.stream(Country.values()).map(country -> country.getDisplayName()).collect(Collectors.toList()));
+    }
+
+
 
 
 }

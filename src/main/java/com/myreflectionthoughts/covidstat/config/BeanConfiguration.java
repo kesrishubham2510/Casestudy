@@ -19,15 +19,16 @@ import com.myreflectionthoughts.covidstat.service.impl.populator.CovidStatTrendP
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.http.HttpClient;
 
 @Configuration
 public class BeanConfiguration {
 
-    @Bean(name = "httpClient")
-    public HttpClient httpClient(){
-        return HttpClient.newHttpClient();
+    @Bean
+    public WebClient webClient(){
+        return WebClient.builder().build();
     }
 
 

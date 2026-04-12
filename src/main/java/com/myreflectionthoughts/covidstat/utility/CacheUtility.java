@@ -23,24 +23,12 @@ public class CacheUtility {
         return country + CURRENT_STAT_SUFFIX;
     }
 
-    public static String getKeyForRawAPIResponse_OneDayPrev(String country) {
-        return country + ONE_DAY_PREV_SUFFIX;
-    }
-
-    public static String getKeyForRawAPIResponse_TwoDayPrev(String country) {
-        return country + TWO_DAY_PREV_SUFFIX;
-    }
-
     public static String getKeyForCountryVaccineCoverageTrends(String country, String referencedDate) {
         return String.format("%s_coverage_trend_%s", country, referencedDate);
     }
 
     public static String getKeyForGlobalVaccineCoverageTrends(String referencedDate) {
         return String.format("global_coverage_trend_%s", referencedDate);
-    }
-
-    public static String getKeyForComputedAPI(String country, String referencedDate) {
-        return String.format("%s_%s",country,referencedDate);
     }
 
     public static String getKeyForAlertMessage(String country, String referencedDate) {
