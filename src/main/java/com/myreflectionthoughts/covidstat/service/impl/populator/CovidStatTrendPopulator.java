@@ -30,10 +30,12 @@ public class CovidStatTrendPopulator implements IResponsePopulator<String, Covid
     private static final Logger logger = Logger.getLogger(CovidStatTrendPopulator.class.getSimpleName());
 
     public CovidStatTrendPopulator( ICacheFacade<String, HashMap<String, Trends>> redisCacheTrendService,
-                                         IDataSource<ResponseWrapper> remoteDataSource){
+                                         IDataSource<ResponseWrapper> remoteDataSource,
+                                    ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> trendEvaluation
+                                    ){
         this.redisCacheTrendService = redisCacheTrendService;
         this.remoteDataSource = remoteDataSource;
-        this.trendEvaluation = NDayAverage.getNDayAverageInstance();
+        this.trendEvaluation = trendEvaluation;
     }
 
     @Override

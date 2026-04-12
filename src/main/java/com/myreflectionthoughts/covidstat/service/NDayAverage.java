@@ -7,17 +7,20 @@ import com.myreflectionthoughts.covidstat.entity.Trends;
 import com.myreflectionthoughts.covidstat.entity.externaldto.CoverageStatTimeline;
 import com.myreflectionthoughts.covidstat.entity.externaldto.ExternalAPIResponse;
 import com.myreflectionthoughts.covidstat.entity.ResponseWrapper;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Component
 public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, ResponseWrapper> {
 
-    private final Logger logger;
-    private NDayAverage(){
-        this.logger = Logger.getLogger(NDayAverage.class.getSimpleName());
+    private static final Logger logger;
+
+    static {
+        logger = Logger.getLogger(NDayAverage.class.getSimpleName());
     }
 
     @Override
@@ -81,12 +84,4 @@ public class NDayAverage implements ITrendEvaluation<ExternalAPIResponse, Respon
         logger.info("Finished calculation for "+stats.size()+" days stats...");
         return trend;
     }
-
-    private static class NDayAverageInstance{
-        private static final NDayAverage nDayAverage = new NDayAverage();
-    }
-    public static NDayAverage getNDayAverageInstance(){
-        return NDayAverageInstance.nDayAverage;
-    }
-
 }

@@ -8,6 +8,7 @@ import com.myreflectionthoughts.covidstat.handler.ConnectionExceptionHandler;
 import com.myreflectionthoughts.covidstat.handler.DataProcessingExceptionHandler;
 import com.myreflectionthoughts.covidstat.handler.GenericExceptionHandler;
 import com.myreflectionthoughts.covidstat.service.HttpConnection;
+import com.myreflectionthoughts.covidstat.service.NDayAverage;
 import com.myreflectionthoughts.covidstat.service.impl.cacheservice.CovidStatRawResponseCacheService;
 import com.myreflectionthoughts.covidstat.service.impl.cacheservice.RedisAlertMessageCacheService;
 import com.myreflectionthoughts.covidstat.service.impl.cacheservice.RedisCacheService;
@@ -56,8 +57,8 @@ public class BeanConfiguration {
     }
 
     @Bean(name = "vaccinationTrendsPopulator")
-    public IResponsePopulator<String, CovidStatResponse> covidTrendsPopulator(TrendCacheService trendCacheService, RemoteDataSource remoteDataSource){
-        return new CovidStatTrendPopulator(trendCacheService, remoteDataSource);
+    public IResponsePopulator<String, CovidStatResponse> covidTrendsPopulator(TrendCacheService trendCacheService, RemoteDataSource remoteDataSource, NDayAverage nDayAverage){
+        return new CovidStatTrendPopulator(trendCacheService, remoteDataSource, nDayAverage);
     }
 
     @Bean(name = "alertMessagePopulator")

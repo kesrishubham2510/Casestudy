@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
 import java.net.URI;
 import java.time.Duration;
@@ -25,11 +24,9 @@ public class WebClientConnection implements IRemoteConnection<String> {
         logger = Logger.getLogger(WebClientConnection.class.getSimpleName());
     }
 
-    public WebClientConnection() {
+    public WebClientConnection(WebClient webClient) {
         this.hostName = "https://disease.sh";
-        this.webClient = WebClient.builder()
-                .baseUrl(hostName)
-                .build();
+        this.webClient = webClient;
     }
 
     @Override

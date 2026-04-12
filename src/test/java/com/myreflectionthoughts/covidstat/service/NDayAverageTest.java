@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     private final NDayAverage nDayAverage;
 
      NDayAverageTest(){
-        this.nDayAverage = NDayAverage.getNDayAverageInstance();
+        this.nDayAverage = new NDayAverage();
     }
     @Test
      void testCalculateNDayGlobalTrend(){

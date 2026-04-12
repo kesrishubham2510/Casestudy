@@ -1,4 +1,4 @@
-package com.myreflectionthoughts.covidstat.service;
+package com.myreflectionthoughts.covidstat.service.impl.cacheservice;
 
 import com.myreflectionthoughts.covidstat.config.CacheConfig;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
