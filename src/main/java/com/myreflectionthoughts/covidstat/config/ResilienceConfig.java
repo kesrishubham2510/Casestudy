@@ -3,17 +3,16 @@ package com.myreflectionthoughts.covidstat.config;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 import java.util.logging.Logger;
 
 
-@Component
+@Configuration
 public class ResilienceConfig {
 
     private final Logger logger = Logger.getLogger(ResilienceConfig.class.getSimpleName());
@@ -66,7 +65,21 @@ public class ResilienceConfig {
 
     @Bean
     public CircuitBreakerRegistry registerCircuitBreakers(CircuitBreakerConfig circuitBreakerConfig){
-        return CircuitBreakerRegistry.of(circuitBreakerConfig);
+
+        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(circuitBreakerConfig);
+
+        registry.getEventPublisher().onEntryAdded(event -> {
+            event.getAddedEntry().getEventPublisher().onStateTransition(resilienceEvent -> {
+                logger.info("CircuitBreaker State Change: " + resilienceEvent.getCircuitBreakerName()
+                                    + " -> " + resilienceEvent.getStateTransition());
+            });
+        });
+
+        registry.circuitBreaker("latestCountryStats");
+        registry.circuitBreaker("vaccineCoverageStats");
+        registry.circuitBreaker("lastTwoDayStats");
+
+        return registry;
     }
 
     @Bean
