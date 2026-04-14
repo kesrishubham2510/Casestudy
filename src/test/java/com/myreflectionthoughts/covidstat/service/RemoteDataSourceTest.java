@@ -30,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.concurrent.CompletionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -120,7 +121,7 @@ class RemoteDataSourceTest {
 
         when(remoteConnection.executeGetRequest(anyString(), anyMap()))
                 .thenReturn("}");
-        assertThrows(CaseStudyException.class,
+        assertThrows(CompletionException.class,
                      () -> remoteDataSource.getDataForAlerts(Country.INDIA.getDisplayName(), 1));
     }
 
@@ -133,7 +134,7 @@ class RemoteDataSourceTest {
                 .thenReturn(validJson)
                 .thenReturn("}");
 
-        assertThrows(CaseStudyException.class,
+        assertThrows(CompletionException.class,
                      () -> remoteDataSource.getDataForAlerts(Country.INDIA.getDisplayName(), 1));
     }
 
