@@ -6,15 +6,22 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
+
+import static com.myreflectionthoughts.covidstat.constant.ServiceConstant.CORRELATION_HEADER;
 
 @Component
 public class RequestFilter extends OncePerRequestFilter {
     private String apiKey;
+    private final Logger logger = LoggerFactory.getLogger(RequestFilter.class.getSimpleName());
 
     public RequestFilter(APIKeyConfig apiKeyConfig){
         super();
@@ -35,9 +42,17 @@ public class RequestFilter extends OncePerRequestFilter {
     private void checkAPIKey(HttpServletRequest request, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         String requestApiKey = request.getHeader("API-KEY");
+        String correlationId = request.getHeader(CORRELATION_HEADER);
+
+        if (StringUtils.isEmpty(correlationId)) {
+            correlationId = UUID.randomUUID().toString();
+        }
+
+        MDC.put("requestURI", request.getRequestURI());
+        MDC.put("correlationId", correlationId);
 
         if(StringUtils.isEmpty(requestApiKey)){
-            System.out.println("No API Key found");
+            logger.warn("No API Key found");
         }
 
         if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
@@ -46,6 +61,12 @@ public class RequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        filterChain.doFilter(request, servletResponse);
+        try {
+            servletResponse.setHeader(CORRELATION_HEADER, correlationId);
+            filterChain.doFilter(request, servletResponse);
+        } finally {
+            MDC.remove("correlationId");
+            MDC.remove("requestURI");
+        }
     }
 }
