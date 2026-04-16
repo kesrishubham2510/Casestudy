@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 @Service
@@ -96,31 +97,21 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     @CircuitBreaker(name="lastTwoDayStats", fallbackMethod = "staticLastTwoDayStats")
     public LastTwoDaysResponse getDataForAlerts(String country, long referencedDate) {
 
-        String url = null;
-        ExternalAPIResponse externalAPIResponse = null;
         LastTwoDaysResponse lastTwoDaysResponse = new LastTwoDaysResponse();
-        String response = null;
 
 
-        try {
+        // Can use Async request processing here
 
-            url = prepareURLForPreviousDay(country);
-            response = remoteConnection.executeGetRequest(url, defaultHeaders);
-            externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
-            lastTwoDaysResponse.getLastTwoDaysResponse().add(externalAPIResponse);
+        CompletableFuture<ExternalAPIResponse> lastDayResponseFuture = fetchAsync(prepareURLForPreviousDay(country));
+        CompletableFuture<ExternalAPIResponse> secondLastDayResponseFuture = fetchAsync(prepareURLForPreviousToPreviousDay(country));
 
-            url = prepareURLForPreviousToPreviousDay(country);
-            response = remoteConnection.executeGetRequest(url, defaultHeaders);
-            externalAPIResponse = this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
-            lastTwoDaysResponse.getLastTwoDaysResponse().add(externalAPIResponse);
+        return lastDayResponseFuture.thenCombine(secondLastDayResponseFuture, (response1, response2)-> {
+            lastTwoDaysResponse.getLastTwoDaysResponse().add(response1);
+            lastTwoDaysResponse.getLastTwoDaysResponse().add(response2);
 
-        } catch (JsonProcessingException e) {
-            logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
-            throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
-        }
-
-        logger.info("Last two days data for alert, country:- { "+country+" }, received/evaluated successfully");
-        return lastTwoDaysResponse;
+            logger.info("Last two days data for alert, country:- { " + country + " }, received/evaluated successfully");
+            return lastTwoDaysResponse;
+        }).join();
     }
 
     private String prepareURLForPreviousDay(String country){
@@ -226,5 +217,18 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
         throw new FallbackException();
 
+    }
+
+    private CompletableFuture<ExternalAPIResponse> fetchAsync(String url){
+
+        return CompletableFuture.supplyAsync(()->{
+            String response = remoteConnection.executeGetRequest(url, defaultHeaders);
+            try {
+                return this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
+            } catch (JsonProcessingException e) {
+                logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
+                throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
+            }
+        });
     }
 }
