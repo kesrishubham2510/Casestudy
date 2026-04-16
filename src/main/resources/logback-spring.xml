@@ -54,7 +54,9 @@
                         "level": "%level",
                         "logger": "%logger",
                         "thread": "%thread",
+                        "uri": "%X{requestURI}",
                         "message": "%message",
+                        "correlationId": "%X{correlationId}",
                         "traceId": "%X{traceId:-}",
                         "spanId": "%X{spanId:-}",
                         "appName": "${appName}"
