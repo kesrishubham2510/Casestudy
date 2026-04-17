@@ -8,6 +8,7 @@ services:
     container_name: "covidstat_service"
     labels:
       loggable: "true"
+      app: covidstat
     networks:
       - casestudy
     ports:
