@@ -18,3 +18,23 @@ management:
     web:
       exposure:
         include: circuitbreakers
+
+otel:
+  service:
+    name: covidstat-service
+
+  traces:
+    exporter: otlp
+
+  exporter:
+    otlp:
+      endpoint: http://otel-collector:4317
+
+  instrumentation:
+    logback-mdc:
+      enabled: true
+
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
