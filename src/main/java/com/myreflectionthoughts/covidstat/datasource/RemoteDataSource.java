@@ -16,6 +16,7 @@ import com.myreflectionthoughts.covidstat.utility.MappingUtility;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.common.util.StringUtils;
+import io.micrometer.context.ContextSnapshot;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -105,12 +106,20 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
         CompletableFuture<ExternalAPIResponse> lastDayResponseFuture = fetchAsync(prepareURLForPreviousDay(country));
         CompletableFuture<ExternalAPIResponse> secondLastDayResponseFuture = fetchAsync(prepareURLForPreviousToPreviousDay(country));
 
-        return lastDayResponseFuture.thenCombine(secondLastDayResponseFuture, (response1, response2)-> {
-            lastTwoDaysResponse.getLastTwoDaysResponse().add(response1);
-            lastTwoDaysResponse.getLastTwoDaysResponse().add(response2);
+        ContextSnapshot snapshot = ContextSnapshot.captureAll();
 
-            logger.info("Last two days data for alert, country:- { " + country + " }, received/evaluated successfully");
-            return lastTwoDaysResponse;
+        return lastDayResponseFuture.thenCombine(secondLastDayResponseFuture, (response1, response2)-> {
+
+            try (ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
+
+                lastTwoDaysResponse.getLastTwoDaysResponse().add(response1);
+                lastTwoDaysResponse.getLastTwoDaysResponse().add(response2);
+
+                logger.info("Last two days data for alert, country:- { " + country + " }, received/evaluated successfully");
+
+                return lastTwoDaysResponse;
+            }
+
         }).join();
     }
 
@@ -219,15 +228,40 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
     }
 
+//    private CompletableFuture<ExternalAPIResponse> fetchAsync(String url){
+//
+//        return CompletableFuture.supplyAsync(()->{
+//            String response = remoteConnection.executeGetRequest(url, defaultHeaders);
+//            try {
+//                return this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
+//            } catch (JsonProcessingException e) {
+//                logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
+//                throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
+//            }
+//        });
+//    }
+
     private CompletableFuture<ExternalAPIResponse> fetchAsync(String url){
 
-        return CompletableFuture.supplyAsync(()->{
-            String response = remoteConnection.executeGetRequest(url, defaultHeaders);
-            try {
-                return this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
-            } catch (JsonProcessingException e) {
-                logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
-                throw new CaseStudyException(ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY, 400, "Error occurred while parsing response for daily stats");
+        ContextSnapshot snapshot = ContextSnapshot.captureAll();
+
+        return CompletableFuture.supplyAsync(() -> {
+
+            try (ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
+
+                String response = remoteConnection.executeGetRequest(url, defaultHeaders);
+
+                try {
+                    return this.mappingUtility.parseToPOJO(response, ExternalAPIResponse.class);
+                } catch (JsonProcessingException e) {
+                    logger.severe("Error occurred while parsing response for latest stats, ex:- "+e.getMessage());
+                    throw new CaseStudyException(
+                            ServiceConstant._ERR_PARSING_ERROR_DAILY_STAT_KEY,
+                            400,
+                            "Error occurred while parsing response for daily stats"
+                    );
+                }
+
             }
         });
     }
