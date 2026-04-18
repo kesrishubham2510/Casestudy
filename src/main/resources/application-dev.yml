@@ -26,5 +26,3 @@ management:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
 
-# Keep a single tracing path active. The app is currently started with the Elastic APM Java agent.
-# Leaving OTel export enabled here causes extra exporter noise and makes log-correlation debugging harder.
