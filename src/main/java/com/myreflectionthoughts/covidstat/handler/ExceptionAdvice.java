@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.covidstat.handler;
 
+import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.exception.CountryNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,13 @@ public class ExceptionAdvice {
     public ResponseEntity<String> handleCountryNotFound(CountryNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CaseStudyException.class)
+    public ResponseEntity<String> handleCountryNotFound(CaseStudyException ex) {
+        return ResponseEntity
+                .status(ex.getStatusCode())
                 .body(ex.getMessage());
     }
 }

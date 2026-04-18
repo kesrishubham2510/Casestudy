@@ -4,10 +4,12 @@ import com.myreflectionthoughts.covidstat.constant.Country;
 import com.myreflectionthoughts.covidstat.contract.IResponsePopulator;
 import com.myreflectionthoughts.covidstat.contract.IValidator;
 import com.myreflectionthoughts.covidstat.entity.CovidStatResponse;
+import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
 import com.myreflectionthoughts.covidstat.exception.CountryNotFoundException;
 import com.myreflectionthoughts.covidstat.exception.FallbackException;
 import com.myreflectionthoughts.covidstat.utility.DataUtility;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static com.myreflectionthoughts.covidstat.constant.ServiceConstant._ERR_BAD_REQUEST_KEY;
 
 
 @Service
@@ -54,7 +58,7 @@ public class Orchestrator {
                 .collect(Collectors.toSet());
 
         if (countrySet.size() < 2) {
-            throw new CountryNotFoundException("Need atleast two countries to compare");
+            throw new CaseStudyException(_ERR_BAD_REQUEST_KEY, HttpStatus.BAD_REQUEST.value(), "Need atleast two countries to compare");
         }
 
         statResponses = countrySet.stream().map(country -> {
