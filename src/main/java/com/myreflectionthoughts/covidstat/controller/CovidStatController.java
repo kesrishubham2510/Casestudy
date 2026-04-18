@@ -33,6 +33,7 @@ public class CovidStatController {
 
 
     @ApiResponse(responseCode = "200", description = "Countries latest stats on covid")
+    @ApiResponse(responseCode = "400", description = "Check response for details")
     @GetMapping(ServiceConstant.API_VERSION + "/countries/{country}")
     public ResponseEntity<CovidStatResponse> getCountryStats(@PathVariable ("country") Country country,
                                                              @RequestParam (value = "referencedDate", required = false, defaultValue = "")
@@ -44,6 +45,7 @@ public class CovidStatController {
     }
 
     @ApiResponse(responseCode = "200", description = "Comparison stats based on global stats on the referenced date")
+    @ApiResponse(responseCode = "400", description = "Check response for details")
     @GetMapping(ServiceConstant.API_VERSION + "/countries/compare")
     public ResponseEntity<List<CovidStatResponse>> getCountryComparisonStats(
             @RequestParam (value = "referencedDate", required = false, defaultValue = "")
@@ -61,6 +63,7 @@ public class CovidStatController {
     }
 
     @ApiResponse(responseCode = "200", description = "List of all supported countries")
+    @ApiResponse(responseCode = "400", description = "Check response for details")
     @GetMapping(ServiceConstant.API_VERSION + "/countries/supportedCountries")
     public ResponseEntity<List<String>> getSupportedCountries(){
         return  ResponseEntity.status(HttpStatus.OK).body(Arrays.stream(Country.values()).map(country -> country.getDisplayName()).collect(Collectors.toList()));

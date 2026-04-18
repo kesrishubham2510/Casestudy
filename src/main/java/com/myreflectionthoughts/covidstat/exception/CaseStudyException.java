@@ -6,7 +6,6 @@ import lombok.Data;
 public class CaseStudyException extends RuntimeException{
     private final String key;
     private final int statusCode;
-    private String message;
 
     public CaseStudyException(String key, int statusCode, String message){
         super(message);
