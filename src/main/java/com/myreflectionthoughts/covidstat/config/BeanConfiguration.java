@@ -16,19 +16,24 @@ import com.myreflectionthoughts.covidstat.service.impl.cacheservice.TrendCacheSe
 import com.myreflectionthoughts.covidstat.service.impl.populator.AlertMessagePopulator;
 import com.myreflectionthoughts.covidstat.service.impl.populator.CountryStatResponsePopulator;
 import com.myreflectionthoughts.covidstat.service.impl.populator.CovidStatTrendPopulator;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.net.http.HttpClient;
+import reactor.core.publisher.Hooks;
 
 @Configuration
 public class BeanConfiguration {
 
+    @PostConstruct
+    public void enableReactorContextPropagation() {
+        Hooks.enableAutomaticContextPropagation();
+    }
+
     @Bean
-    public WebClient webClient(){
-        return WebClient.builder().build();
+    public WebClient webClient(WebClient.Builder builder){
+        return builder.build();
     }
 
 

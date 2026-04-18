@@ -2,7 +2,8 @@ package com.myreflectionthoughts.covidstat.service.impl.cacheservice;
 
 import com.myreflectionthoughts.covidstat.config.CacheConfig;
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
-import com.myreflectionthoughts.covidstat.service.impl.cacheservice.RedisCacheService;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import redis.clients.jedis.Jedis;
@@ -12,6 +13,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
  class RedisCacheServiceTest {
+
+    private Tracer mockTracer() {
+        Tracer tracer = mock(Tracer.class);
+        Span span = mock(Span.class);
+        Tracer.SpanInScope spanInScope = mock(Tracer.SpanInScope.class);
+
+        when(tracer.nextSpan()).thenReturn(span);
+        when(span.name(anyString())).thenReturn(span);
+        when(span.tag(anyString(), anyString())).thenReturn(span);
+        when(span.start()).thenReturn(span);
+        when(tracer.withSpan(span)).thenReturn(spanInScope);
+
+        return tracer;
+    }
 
     @Test
     void testConstructorAndPing_Success() {
@@ -23,10 +38,10 @@ import static org.mockito.Mockito.*;
         try (MockedConstruction<Jedis> mocked = mockConstruction(Jedis.class,
                                                                  (mock, context) -> when(mock.ping()).thenReturn("PONG"))) {
 
-            RedisCacheService service = new RedisCacheService(cacheConfig);
+            RedisCacheService service = new RedisCacheService(cacheConfig, mockTracer());
 
             assertNotNull(service);
-            verify(mocked.constructed().get(0), times(2)).ping();
+            verify(mocked.constructed().get(0), times(1)).ping();
         }
     }
 
@@ -41,7 +56,7 @@ import static org.mockito.Mockito.*;
                                                                  (mock, context) -> when(mock.ping()).thenReturn("FAIL"))) {
 
             assertThrows(CaseStudyException.class,
-                         () -> new RedisCacheService(cacheConfig));
+                         () -> new RedisCacheService(cacheConfig, mockTracer()));
         }
     }
 
@@ -55,7 +70,7 @@ import static org.mockito.Mockito.*;
         try (MockedConstruction<Jedis> mocked = mockConstruction(Jedis.class,
                                                                  (mock, context) -> when(mock.ping()).thenReturn("PONG"))) {
 
-            RedisCacheService service = new RedisCacheService(cacheConfig);
+            RedisCacheService service = new RedisCacheService(cacheConfig, mockTracer());
 
             Jedis jedisMock = mocked.constructed().get(0);
 
@@ -78,7 +93,7 @@ import static org.mockito.Mockito.*;
                                                                      when(mock.get("key1")).thenReturn("cachedValue");
                                                                  })) {
 
-            RedisCacheService service = new RedisCacheService(cacheConfig);
+            RedisCacheService service = new RedisCacheService(cacheConfig, mockTracer());
 
             String result = service.get("key1");
 

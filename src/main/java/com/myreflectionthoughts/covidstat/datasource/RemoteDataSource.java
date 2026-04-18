@@ -17,6 +17,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.common.util.StringUtils;
 import io.micrometer.context.ContextSnapshot;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -100,17 +101,18 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
         LastTwoDaysResponse lastTwoDaysResponse = new LastTwoDaysResponse();
 
-
-        // Can use Async request processing here
+        // Can use Async request processing here because of two independent requests
 
         CompletableFuture<ExternalAPIResponse> lastDayResponseFuture = fetchAsync(prepareURLForPreviousDay(country));
         CompletableFuture<ExternalAPIResponse> secondLastDayResponseFuture = fetchAsync(prepareURLForPreviousToPreviousDay(country));
 
         ContextSnapshot snapshot = ContextSnapshot.captureAll();
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return lastDayResponseFuture.thenCombine(secondLastDayResponseFuture, (response1, response2)-> {
 
-            try (ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
+            try (MdcScope ignored = new MdcScope(mdcContext);
+                 ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
 
                 lastTwoDaysResponse.getLastTwoDaysResponse().add(response1);
                 lastTwoDaysResponse.getLastTwoDaysResponse().add(response2);
@@ -244,10 +246,12 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
     private CompletableFuture<ExternalAPIResponse> fetchAsync(String url){
 
         ContextSnapshot snapshot = ContextSnapshot.captureAll();
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return CompletableFuture.supplyAsync(() -> {
 
-            try (ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
+            try (MdcScope ignored = new MdcScope(mdcContext);
+                 ContextSnapshot.Scope scope = snapshot.setThreadLocals()) {
 
                 String response = remoteConnection.executeGetRequest(url, defaultHeaders);
 
@@ -264,5 +268,28 @@ public class RemoteDataSource implements IDataSource<ResponseWrapper> {
 
             }
         });
+    }
+
+    private static final class MdcScope implements AutoCloseable {
+        private final Map<String, String> previousContext;
+
+        private MdcScope(Map<String, String> newContext) {
+            this.previousContext = MDC.getCopyOfContextMap();
+
+            if (newContext == null || newContext.isEmpty()) {
+                MDC.clear();
+            } else {
+                MDC.setContextMap(newContext);
+            }
+        }
+
+        @Override
+        public void close() {
+            if (previousContext == null || previousContext.isEmpty()) {
+                MDC.clear();
+            } else {
+                MDC.setContextMap(previousContext);
+            }
+        }
     }
 }

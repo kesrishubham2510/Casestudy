@@ -1,6 +1,8 @@
 package com.myreflectionthoughts.covidstat.service;
 
 import com.myreflectionthoughts.covidstat.exception.CaseStudyException;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -28,14 +30,30 @@ class WebClientConnectionTest {
     @Mock
     private WebClient.ResponseSpec responseSpec;
 
+    @Mock
+    private Tracer tracer;
+
+    @Mock
+    private Span span;
+
+    @Mock
+    private Tracer.SpanInScope spanInScope;
+
     private WebClientConnection connection;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
 
+        when(tracer.nextSpan()).thenReturn(span);
+        when(span.name(anyString())).thenReturn(span);
+        when(span.tag(anyString(), anyString())).thenReturn(span);
+        when(span.start()).thenReturn(span);
+        when(tracer.withSpan(span)).thenReturn(spanInScope);
+
         connection = new WebClientConnection(
-                webClient
+                webClient,
+                tracer
         );
     }
 
@@ -54,6 +72,7 @@ class WebClientConnectionTest {
         String result = connection.executeGetRequest("/test", Map.of());
 
         assertEquals("SUCCESS", result);
+        verify(span).end();
     }
 
     @Test
@@ -73,6 +92,8 @@ class WebClientConnectionTest {
 
         assertThrows(CaseStudyException.class,
                      () -> connection.executeGetRequest("/test", Map.of()));
+        verify(span).error(any(CaseStudyException.class));
+        verify(span).end();
     }
 
 
@@ -92,6 +113,8 @@ class WebClientConnectionTest {
 
         assertThrows(CaseStudyException.class,
                      () -> connection.executeGetRequest("/test", Map.of()));
+        verify(span).error(any(CaseStudyException.class));
+        verify(span).end();
     }
 
     @Test
@@ -103,5 +126,7 @@ class WebClientConnectionTest {
                                              () -> connection.executeGetRequest("/test", Map.of()));
 
         assertNotNull(ex);
+        verify(span).error(any(RuntimeException.class));
+        verify(span).end();
     }
 }
