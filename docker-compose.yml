@@ -4,7 +4,7 @@ services:
   api-covidstat:
     build: .
     # specifying the image-name for the image built using dockerfile
-    image: "covidstat:0.0.1"
+    image: covidstat:${IMAGE_TAG}
     container_name: "covidstat_service"
     labels:
       loggable: "true"

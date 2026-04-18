@@ -88,7 +88,12 @@ tasks.named('test') {
 }
 
 tasks.register('buildAndTagDockerImage', Exec) {
-	commandLine 'docker', 'compose', 'build'
+	def tag = new Date().format('yyyyMMddHHmmss')
+
+	commandLine 'sh', '-c', """
+        IMAGE_TAG=${tag} docker compose build && \
+        docker tag covidstat:${tag} covidstat:latest 
+    """
 
 	workingDir '.'
 	dependsOn(tasks.named('jar'))
