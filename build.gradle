@@ -92,7 +92,9 @@ tasks.register('buildAndTagDockerImage', Exec) {
 
 	commandLine 'sh', '-c', """
         IMAGE_TAG=${tag} docker compose build && \
-        docker tag covidstat:${tag} covidstat:latest 
+        docker tag kshubhamm/covidstat:${tag} kshubhamm/covidstat:latest && \
+        docker push kshubhamm/covidstat:${tag} && \
+        docker push kshubhamm/covidstat:latest 
     """
 
 	workingDir '.'
