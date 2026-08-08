@@ -7,7 +7,7 @@ cache:
     vaccineCoverageTrends: 7200
     alertMessage: 35
 
-  host: localhost
+  host: ${REDIS_HOST}
   port: 6379
 
 api:
