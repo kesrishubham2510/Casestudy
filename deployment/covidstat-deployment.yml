@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: covidstat-deployment
+    labels:
+      group: backend
+spec:
+  selector:
+    matchLabels:
+      app: covidstat
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: covidstat
+        group: backend
+    spec:
+      containers:
+        - name: covidstat
+          image: kshubhamm/covidstat:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: covidstat-secret
+                  key: REDIS_HOST
+
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: covidstat-secret
+                  key: API_KEY
