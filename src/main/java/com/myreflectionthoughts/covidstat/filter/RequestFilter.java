@@ -36,7 +36,7 @@ public class RequestFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request){
         String requestURI = request.getRequestURI();
-        return request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name()) || requestURI.contains("/swagger") || requestURI.contains("/swagger-ui") || requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui.html");
+        return request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name()) || requestURI.contains("/swagger") || requestURI.contains("/swagger-ui") || requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui.html") || requestURI.contains("/api/covid-stat/health") || requestURI.contains("/api/covid-stat/info");
     }
 
     private void checkAPIKey(HttpServletRequest request, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
